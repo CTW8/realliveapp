@@ -1,10 +1,12 @@
-# RealLive Android UI Prototype
+# RealLive UI Prototypes
 
-RealLive 是一个 **Android 手机端** 远程监控 App 的静态高保真 UI 原型仓库，当前以单文件页面展示完整业务流程（认证、实时监看、回看、设备管理、账号安全）。
+RealLive 是远程监控产品的原型仓库，当前包含两套静态页面：
+- Android 手机端 App UI（巡检、实时监看、回放、告警、设备配置）
+- 服务器端 Web Console UI（运营与运维管理后台）
 
 ## Quick Start
 
-本项目无需安装依赖，直接本地启动静态服务即可预览：
+项目无需安装依赖，使用静态服务即可预览：
 
 ```bash
 python3 -m http.server 8080
@@ -12,27 +14,20 @@ python3 -m http.server 8080
 
 打开浏览器访问：
 
-```text
-http://localhost:8080
-```
+- Mobile App: `http://localhost:8080/prototypes/mobile-app/index.html`
+- Server Web: `http://localhost:8080/prototypes/server-web/web-console.html`
 
 ## Repository Structure
 
-- `index.html`: 主原型文件（HTML + CSS + 页面流程）
-- `UI_DESIGN.md`: 详细 UI 设计说明（偏实现规范）
-- `UI_DESIGN_REVIEW.md`: 评审版说明（偏产品与体验价值）
-- `UI_ONE_PAGER.md`: 一页式汇报版（适合飞书/Confluence）
+- `prototypes/mobile-app/index.html`: 移动端主原型（单文件 HTML+CSS+JS）
+- `prototypes/mobile-app/UI_DESIGN.md`: 移动端详细设计说明
+- `prototypes/mobile-app/UI_DESIGN_REVIEW.md`: 移动端评审说明
+- `prototypes/mobile-app/UI_ONE_PAGER.md`: 移动端一页式说明
+- `prototypes/server-web/web-console.html`: 服务器端 Web 控制台原型
+- `prototypes/server-web/WEB_UI_DESIGN.md`: 服务器端 Web 页面说明
 - `AGENTS.md`: 仓库协作与贡献指南
-
-## Documentation Index
-
-建议阅读顺序：
-
-1. `UI_ONE_PAGER.md`：快速了解项目目标与成果
-2. `UI_DESIGN_REVIEW.md`：用于方案评审与排期讨论
-3. `UI_DESIGN.md`：用于开发落地与细节对齐
 
 ## Notes
 
-- 当前为静态原型，不包含后端接口与真实数据联动。
-- 如需扩展为工程化项目，建议下一步拆分 `src/`、`assets/`、`tests/` 目录。
+- 当前均为静态原型，不包含真实后端接口与鉴权。
+- 目标是快速演示业务流程、页面跳转与布局规范，不是生产代码。

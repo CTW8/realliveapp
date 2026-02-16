@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RealLive - Android Remote Monitoring App UI</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pri:#C8BFFF;--on-pri:#2F0094;--pri-c:#4B2DB3;--on-pri-c:#E6DEFF;
+  --sec:#C9C3DC;--on-sec:#312C42;--sec-c:#484259;--on-sec-c:#E5DFF9;
+  --ter:#EFBDD3;--on-ter:#4D2A3A;--ter-c:#664051;--on-ter-c:#FFD9E7;
+  --err:#FFB4AB;--on-err:#690005;--err-c:#93000A;
+  --bg:#1C1B1F;--on-bg:#E6E1E5;
+  --sf:#1C1B1F;--on-sf:#E6E1E5;
+  --sfv:#49454F;--on-sfv:#CAC4D0;
+  --ol:#938F99;--olv:#49454F;
+  --sc0:#0F0D13;--sc1:#1D1B20;--sc:#211F26;--sc2:#2B2930;--sc3:#36343B;
+  --inv-sf:#E6E1E5;--inv-on-sf:#313033;--inv-pri:#6442D6;
+  --green:#7DD881;--red:#FF6B6B;--orange:#FF9E43;
+  --e1:0 1px 3px 1px rgba(0,0,0,.15),0 1px 2px rgba(0,0,0,.3);
+  --e2:0 2px 6px 2px rgba(0,0,0,.15),0 1px 2px rgba(0,0,0,.3);
+  --e3:0 4px 8px 3px rgba(0,0,0,.15),0 1px 3px rgba(0,0,0,.3);
+  --r0:0;--r1:4px;--r2:8px;--r3:12px;--r4:16px;--r5:28px;--r6:9999px;
+}
+html{scroll-behavior:smooth}
+html,body{width:100%;min-height:100%;font-family:'Roboto',sans-serif;background:#0a0a0f;color:var(--on-sf)}
+body::-webkit-scrollbar{width:8px}
+body::-webkit-scrollbar-track{background:#0a0a0f}
+body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
+.mi{font-family:'Material Symbols Outlined';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;font-style:normal;display:inline-block;line-height:1;text-transform:none;letter-spacing:normal;word-wrap:normal;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none}
+.material-symbols-outlined.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ===== Layout ===== */
+.showcase{padding:20px 0 60px}
+.flow-group{padding:24px 0}
+.flow-header{display:flex;align-items:center;gap:16px;padding:0 40px 20px;position:relative}
+.flow-header::before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--olv),transparent)}
+.flow-header h2{font:500 13px/1 'Roboto',sans-serif;color:var(--pri);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;background:var(--sc);padding:4px 16px;border-radius:var(--r6);border:1px solid var(--olv)}
+.flow-header::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--olv),transparent)}
+.flow-row{display:flex;flex-wrap:wrap;justify-content:center;gap:20px 16px;padding:0 24px}
+.pw{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pw .lbl{font:500 12px/1 'Roboto',sans-serif;color:var(--on-sfv);letter-spacing:.5px;text-align:center;max-width:200px}
+.pw .sublbl{font:400 11px/1.3 'Roboto',sans-serif;color:var(--ol);text-align:center;max-width:200px;margin-top:-4px}
+
+/* Arrow connector */
+.flow-arrow{display:flex;align-items:center;justify-content:center;align-self:center;color:var(--ol);flex-shrink:0;padding:0 4px}
+.flow-arrow .material-symbols-outlined{font-size:28px}
+
+/* Phone */
+.pf{flex-shrink:0;width:375px;height:812px;background:var(--bg);border-radius:40px;border:7px solid #2a2a30;box-shadow:0 0 0 2px #1a1a20,0 16px 48px rgba(0,0,0,.5);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.pf::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#2a2a30;border-radius:0 0 14px 14px;z-index:100}
+
+/* Status Bar */
+.sb{display:flex;justify-content:space-between;align-items:center;padding:12px 24px 4px;font:500 12px/16px 'Roboto',sans-serif;color:var(--on-sf);position:relative;z-index:50;flex-shrink:0}
+.sb-r{display:flex;align-items:center;gap:5px}
+.sb-r .material-symbols-outlined{font-size:15px}
+/* Prevent content from being covered when status bar is absolutely positioned */
+.pf>.sb[style*="position:absolute"]{top:0;left:0;right:0}
+.pf>.sb[style*="position:absolute"]+*{padding-top:32px}
+
+/* Page scroll area */
+.pc{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.pc::-webkit-scrollbar{display:none}
+
+/* Nav Bar */
+.nb{display:flex;justify-content:space-around;align-items:center;min-height:76px;height:auto;background:var(--sc);flex-shrink:0;padding-bottom:8px}
+.ni{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:0 16px}
+.ni .ind{width:60px;height:30px;border-radius:var(--r6);display:flex;align-items:center;justify-content:center;transition:background .2s}
+.ni.a .ind{background:var(--sec-c)}
+.ni.a .ind .material-symbols-outlined{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+.ni .nl{font:500 11px/16px 'Roboto',sans-serif;color:var(--on-sfv);text-align:center;overflow-wrap:anywhere}
+.ni.a .nl{color:var(--on-sf);font-weight:700}
+
+/* Top App Bar */
+.tab{display:flex;align-items:center;padding:8px 4px;height:60px;flex-shrink:0}
+.tab .ld{width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%}
+.tab .tt{flex:1;min-width:0;font:400 20px/28px 'Roboto',sans-serif;padding-left:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab .tr{display:flex}
+.tab .tr .ib{width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%}
+
+/* Buttons */
+.btn-f{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 24px;border:none;border-radius:var(--r6);background:var(--pri);color:var(--on-pri);font:500 14px/20px 'Roboto',sans-serif;cursor:pointer;width:100%;letter-spacing:.5px}
+.btn-o{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 24px;border:1px solid var(--ol);border-radius:var(--r6);background:transparent;color:var(--pri);font:500 14px/20px 'Roboto',sans-serif;cursor:pointer;width:100%}
+.btn-t{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 12px;border:none;border-radius:var(--r6);background:transparent;color:var(--pri);font:500 14px/20px 'Roboto',sans-serif;cursor:pointer}
+.btn-tonal{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 24px;border:none;border-radius:var(--r6);background:var(--sec-c);color:var(--on-sec-c);font:500 14px/20px 'Roboto',sans-serif;cursor:pointer;width:100%}
+
+/* Text Field */
+.tf{position:relative;margin-bottom:14px}
+.tf input,.tf select{width:100%;height:54px;padding:22px 16px 8px;border:none;border-radius:var(--r1) var(--r1) 0 0;background:var(--sc3);color:var(--on-sf);font:400 16px/24px 'Roboto',sans-serif;border-bottom:2px solid var(--on-sfv);outline:none;transition:border-color .2s}
+.tf input:focus,.tf select:focus{border-bottom-color:var(--pri)}
+.tf label{position:absolute;left:16px;top:7px;font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);pointer-events:none}
+.tf input:focus+label{color:var(--pri)}
+.tf .ti{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--on-sfv);cursor:pointer;font-size:20px}
+
+/* Chips */
+.chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 16px;border-radius:var(--r2);border:1px solid var(--ol);font:500 13px/20px 'Roboto',sans-serif;color:var(--on-sfv);background:transparent;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.chip.sel{background:var(--sec-c);color:var(--on-sec-c);border-color:transparent}
+.chip .material-symbols-outlined{font-size:16px}
+
+/* Switch */
+.sw{width:50px;height:30px;border-radius:15px;background:var(--sfv);position:relative;cursor:pointer;border:2px solid var(--ol);flex-shrink:0}
+.sw.on{background:var(--pri);border-color:var(--pri)}
+.sw::after{content:'';position:absolute;top:5px;left:5px;width:16px;height:16px;border-radius:50%;background:var(--ol);transition:.2s}
+.sw.on::after{left:26px;background:var(--on-pri);width:18px;height:18px;top:4px}
+
+/* Divider */
+.dv{height:1px;background:var(--olv);margin:8px 0}
+
+/* FAB */
+.fab{position:absolute;bottom:92px;right:20px;width:56px;height:56px;border-radius:var(--r4);background:var(--pri-c);color:var(--on-pri-c);display:flex;align-items:center;justify-content:center;box-shadow:var(--e3);cursor:pointer;z-index:10}
+
+/* Simulated video */
+.sv{width:100%;height:100%;position:relative;overflow:hidden}
+.sv .sl{position:absolute;top:0;left:0;right:0;height:2px;background:rgba(200,191,255,.08);animation:scan 3s linear infinite}
+@keyframes scan{0%{top:-2px}100%{top:100%}}
+.sv .go{position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:20px 20px}
+.sv .ri{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.sv .ri .material-symbols-outlined{font-size:52px;color:rgba(255,255,255,.06)}
+.sg{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.012) 2px,rgba(255,255,255,.012) 4px);pointer-events:none}
+
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.blink{animation:blink 1.5s infinite}
+
+/* ===== Specific Page Styles ===== */
+
+/* -- Splash -- */
+.splash-bg{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:linear-gradient(160deg,#1a1535 0%,#0f0d1a 40%,#1C1B1F 100%);padding:0 40px;text-align:center;position:relative;overflow:hidden}
+.splash-bg .glow{position:absolute;width:300px;height:300px;border-radius:50%;filter:blur(80px);opacity:.15}
+.splash-bg .glow1{background:var(--pri);top:-60px;right:-80px}
+.splash-bg .glow2{background:var(--ter);bottom:-60px;left:-80px}
+.splash-logo{width:96px;height:96px;border-radius:24px;background:linear-gradient(135deg,var(--pri),var(--ter));display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 8px 32px rgba(100,66,214,.3)}
+.splash-logo .material-symbols-outlined{font-size:48px;color:#fff;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 48}
+.splash-bg h1{font:500 32px/40px 'Roboto',sans-serif;color:#fff;margin-bottom:8px}
+.splash-bg p{font:400 15px/22px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:48px;max-width:260px}
+.splash-bg .btn-row{display:flex;flex-direction:column;gap:12px;width:100%}
+
+/* -- Login -- */
+.login-page{display:flex;flex-direction:column;height:100%;padding:0 24px}
+.login-logo{display:flex;flex-direction:column;align-items:center;margin-top:60px;margin-bottom:32px}
+.login-logo .ico{width:72px;height:72px;border-radius:var(--r4);background:linear-gradient(135deg,var(--pri),var(--ter));display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.login-logo .ico .material-symbols-outlined{font-size:36px;color:#fff;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 36}
+.login-logo h1{font:400 26px/34px 'Roboto',sans-serif;color:var(--on-sf)}
+.login-logo p{font:400 14px/20px 'Roboto',sans-serif;color:var(--on-sfv);margin-top:4px}
+.login-form{flex:1}
+.login-form .forgot{text-align:right;margin:-8px 0 20px}
+.login-form .forgot a{font:500 13px/20px 'Roboto',sans-serif;color:var(--pri);text-decoration:none}
+.login-dv{display:flex;align-items:center;gap:14px;margin:20px 0}
+.login-dv span{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.login-dv::before,.login-dv::after{content:'';flex:1;height:1px;background:var(--olv)}
+.social-row{display:flex;gap:10px}
+.social-btn{flex:1;height:40px;border:1px solid var(--ol);border-radius:var(--r6);background:transparent;display:flex;align-items:center;justify-content:center;gap:8px;font:500 13px/20px 'Roboto',sans-serif;color:var(--on-sf);cursor:pointer}
+.login-ft{text-align:center;padding:20px 0 36px;font:400 14px/20px 'Roboto',sans-serif;color:var(--on-sfv)}
+.login-ft a{color:var(--pri);text-decoration:none;font-weight:500}
+
+/* -- Register -- */
+.reg-form{padding:0 24px;flex:1}
+.reg-form .st{font:500 15px/22px 'Roboto',sans-serif;color:var(--on-sf);margin:14px 0 10px}
+.reg-form .ht{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);margin:-10px 0 14px}
+.reg-terms{display:flex;align-items:flex-start;gap:10px;margin:6px 0 20px}
+.reg-terms .cb{width:20px;height:20px;border:2px solid var(--on-sfv);border-radius:3px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.reg-terms .cb.ck{background:var(--pri);border-color:var(--pri)}
+.reg-terms .cb .material-symbols-outlined{font-size:16px;color:var(--on-pri)}
+.reg-terms p{font:400 12px/17px 'Roboto',sans-serif;color:var(--on-sfv)}
+.reg-terms a{color:var(--pri);text-decoration:none}
+
+/* -- Dashboard -- */
+.dash-hd{padding:8px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.dash-hd .greet{display:flex;align-items:center;gap:12px}
+.dash-hd .av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--ter));display:flex;align-items:center;justify-content:center;font:500 16px/24px 'Roboto',sans-serif;color:#fff}
+.dash-hd .gt{min-width:0}
+.dash-hd .gt h2{font:500 16px/24px 'Roboto',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-hd .gt p{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
+.dash-hd .acts{display:flex;gap:2px}
+.dash-hd .ib{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;position:relative}
+.dash-hd .nd{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--err)}
+.stats{display:flex;gap:10px;padding:14px 20px 6px}
+.stc{flex:1;background:var(--sc);border-radius:var(--r3);padding:12px;display:flex;flex-direction:column;gap:6px}
+.stc .si{width:34px;height:34px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center}
+.stc .si .material-symbols-outlined{font-size:18px}
+.stc .si.g{background:rgba(125,216,129,.12);color:var(--green)}
+.stc .si.r{background:rgba(255,107,107,.12);color:var(--red)}
+.stc .si.o{background:rgba(255,158,67,.12);color:var(--orange)}
+.stc .sn{font:500 22px/28px 'Roboto',sans-serif}
+.stc .sl{font:500 11px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
+.sh{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px}
+.sh h3{font:500 15px/22px 'Roboto',sans-serif}
+.sh a{font:500 13px/20px 'Roboto',sans-serif;color:var(--pri);text-decoration:none}
+
+/* Camera Preview Card */
+.cpsc{display:flex;gap:10px;padding:0 20px 10px;overflow-x:auto;scrollbar-width:none}
+.cpsc::-webkit-scrollbar{display:none}
+.cpc{flex-shrink:0;width:240px;border-radius:var(--r3);overflow:hidden;background:var(--sc)}
+.cpt{width:100%;height:135px;position:relative;overflow:hidden}
+.cpt .lb{position:absolute;top:8px;left:8px;display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:var(--r1);background:rgba(200,60,60,.9);font:500 10px/16px 'Roboto',sans-serif;color:#fff}
+.cpt .lb .dot{width:6px;height:6px;border-radius:50%;background:#fff}
+.cpt .ob{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:var(--r1);background:rgba(80,80,80,.9);font:500 10px/16px 'Roboto',sans-serif;color:#aaa}
+.cpt .ts{position:absolute;bottom:6px;right:6px;padding:2px 6px;border-radius:var(--r1);background:rgba(0,0,0,.6);font:500 10px/16px 'Roboto',sans-serif;color:#fff}
+.cpi{padding:10px 12px}
+.cpi h4{font:500 14px/20px 'Roboto',sans-serif;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cpi .loc{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);display:flex;align-items:center;gap:4px}
+.cpi .loc .material-symbols-outlined{font-size:14px}
+
+/* Camera List */
+.cli{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--olv);cursor:pointer}
+.cli:last-child{border-bottom:none}
+.cli .ct{width:52px;height:52px;border-radius:var(--r2);background:var(--sc2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cli .ct .material-symbols-outlined{font-size:22px;color:var(--on-sfv);opacity:.5}
+.cli .ci{flex:1;min-width:0}
+.cli .ci h4{font:500 15px/22px 'Roboto',sans-serif;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cli .ci p{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+.cli .cs{display:flex;align-items:center;gap:5px;font:500 11px/16px 'Roboto',sans-serif}
+.cs .dot{width:8px;height:8px;border-radius:50%}
+.cs .dot.on{background:var(--green)}
+.cs .dot.off{background:var(--red)}
+.cs .dot.rec{background:var(--orange)}
+
+/* -- Search -- */
+.search-bar{margin:0 20px 16px;height:52px;border-radius:var(--r5);background:var(--sc2);display:flex;align-items:center;padding:0 16px;gap:12px}
+.search-bar .material-symbols-outlined{color:var(--on-sfv);font-size:22px}
+.search-bar input{flex:1;border:none;background:transparent;color:var(--on-sf);font:400 15px/22px 'Roboto',sans-serif;outline:none}
+.search-bar input::placeholder{color:var(--on-sfv)}
+.search-section{padding:0 20px}
+.search-section h4{font:500 13px/20px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:10px}
+.search-tag{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:var(--r2);background:var(--sc);font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);margin:0 6px 8px 0}
+.search-result{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--olv)}
+.search-result .sr-icon{width:44px;height:44px;border-radius:var(--r2);background:var(--sc);display:flex;align-items:center;justify-content:center}
+.search-result .sr-icon .material-symbols-outlined{font-size:20px;color:var(--on-sfv)}
+.search-result .sr-text{flex:1;min-width:0}
+.search-result .sr-text h4{font:400 15px/22px 'Roboto',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-result .sr-text p{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+
+/* -- Notifications -- */
+.nti{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--olv)}
+.nti:last-child{border-bottom:none}
+.nti .ni-ic{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nti .ni-ic.mot{background:rgba(255,158,67,.12);color:var(--orange)}
+.nti .ni-ic.alr{background:rgba(255,107,107,.12);color:var(--red)}
+.nti .ni-ic.inf{background:rgba(200,191,255,.12);color:var(--pri)}
+.nti .ni-ic .material-symbols-outlined{font-size:20px}
+.nti .nc{flex:1;min-width:0}
+.nti .nc h4{font:500 14px/20px 'Roboto',sans-serif;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nti .nc p{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+.nti .nc .nt{font:500 11px/16px 'Roboto',sans-serif;color:var(--ol);margin-top:3px}
+.nti .nth{width:52px;height:52px;border-radius:var(--r2);background:var(--sc2);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.nti .nth .material-symbols-outlined{font-size:18px;color:var(--on-sfv);opacity:.4}
+.nti.ur{position:relative}
+.nti.ur::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--pri)}
+
+/* -- Multi Grid -- */
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;flex:1}
+.mg-cell{position:relative;background:linear-gradient(135deg,#0f0e18,#1a1525);overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:0}
+.mg-cell .mg-label{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);display:flex;justify-content:space-between;align-items:center;gap:6px}
+.mg-cell .mg-label span{font:500 11px/16px 'Roboto',sans-serif;color:#fff}
+.mg-cell .mg-label > span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mg-cell .mg-label .mg-status{display:flex;align-items:center;gap:3px;flex-shrink:0}
+.mg-cell .mg-label .mg-status .dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.mg-cell .mg-top{position:absolute;top:0;left:0;right:0;padding:4px 6px;display:flex;justify-content:space-between}
+.mg-cell .mg-top .lb{padding:2px 6px;border-radius:3px;background:rgba(200,60,60,.85);font:500 9px/14px 'Roboto',sans-serif;color:#fff;display:flex;align-items:center;gap:3px}
+.mg-cell .mg-top .lb .dot{width:4px;height:4px;border-radius:50%;background:#fff}
+
+/* -- Camera Full List -- */
+.cam-filter-row{display:flex;gap:8px;padding:0 20px 12px;overflow-x:auto;scrollbar-width:none}
+.cam-filter-row::-webkit-scrollbar{display:none}
+
+/* -- Live View -- */
+.lv-video{width:100%;aspect-ratio:16/9;min-height:248px;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d0d15,#1c1728)}
+.lv-overlay-top{position:absolute;top:0;left:0;right:0;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;background:linear-gradient(to bottom,rgba(0,0,0,.6),transparent);z-index:5}
+.lv-overlay-top .cn{font:500 14px/20px 'Roboto',sans-serif;color:#fff}
+.lv-overlay-top .ct{font:400 12px/16px 'Roboto',sans-serif;color:rgba(255,255,255,.7)}
+.live-badge{position:absolute;top:10px;right:10px;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--r6);background:rgba(200,60,60,.9);font:500 11px/16px 'Roboto',sans-serif;color:#fff;z-index:5}
+.live-badge .dot{width:6px;height:6px;border-radius:50%;background:#fff}
+.lv-controls{position:absolute;bottom:0;left:0;right:0;padding:10px;display:flex;justify-content:center;gap:12px;background:linear-gradient(to top,rgba(0,0,0,.6),transparent);z-index:5}
+.lv-btn{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.1);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px)}
+.lv-btn .material-symbols-outlined{color:#fff;font-size:20px}
+
+.lv-info{flex:1;background:var(--bg);border-radius:var(--r5) var(--r5) 0 0;padding:18px 20px;margin-top:-14px;position:relative;z-index:2;overflow-y:auto;scrollbar-width:none}
+.lv-info::-webkit-scrollbar{display:none}
+.lv-info .handle{width:40px;height:4px;border-radius:2px;background:var(--olv);margin:0 auto 14px}
+.info-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.ic{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--r2);background:var(--sc);font:500 11px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
+.ic .material-symbols-outlined{font-size:15px}
+.ic.live{color:var(--green)}
+
+.act-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.act-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:var(--r3);background:var(--sc);cursor:pointer}
+.act-item .material-symbols-outlined{font-size:22px;color:var(--pri)}
+.act-item span:last-child{font:500 10px/14px 'Roboto',sans-serif;color:var(--on-sfv);text-align:center}
+.event-section h4{font:500 14px/20px 'Roboto',sans-serif;margin-bottom:10px}
+.ev-item{display:flex;align-items:center;gap:10px;padding:9px 0}
+.ev-item .ev-ic{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ev-item .ev-ic.mot{background:rgba(255,158,67,.12);color:var(--orange)}
+.ev-item .ev-ic.alr{background:rgba(255,107,107,.12);color:var(--red)}
+.ev-item .ev-ic .material-symbols-outlined{font-size:16px}
+.ev-item .ev-text{flex:1;min-width:0}
+.ev-item .ev-text p{font:400 13px/18px 'Roboto',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-item .ev-text span{font:400 11px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
+
+/* -- PTZ -- */
+.ptz-page{display:flex;flex-direction:column;height:100%;background:linear-gradient(135deg,#0f0e18,#1c1728)}
+.ptz-video{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d0d15,#1c1728)}
+.ptz-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;z-index:5}
+.ptz-top{padding:10px;display:flex;justify-content:space-between;align-items:center}
+.ptz-top .back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ptz-top .back .material-symbols-outlined{color:#fff;font-size:20px}
+.ptz-top .title{font:500 14px/20px 'Roboto',sans-serif;color:#fff}
+.ptz-bottom{padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.ptz-pad{width:160px;height:160px;border-radius:50%;border:2px solid rgba(255,255,255,.15);position:relative;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);backdrop-filter:blur(8px)}
+.ptz-pad .center-dot{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3)}
+.ptz-pad .arr{position:absolute;color:rgba(255,255,255,.6);cursor:pointer}
+.ptz-pad .arr.up{top:12px}
+.ptz-pad .arr.dn{bottom:12px}
+.ptz-pad .arr.lt{left:12px}
+.ptz-pad .arr.rt{right:12px}
+.ptz-pad .arr .material-symbols-outlined{font-size:28px}
+.ptz-zoom{display:flex;align-items:center;gap:16px}
+.ptz-zoom .zb{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ptz-zoom .zb .material-symbols-outlined{color:#fff;font-size:20px}
+.ptz-zoom .zbar{width:120px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;position:relative}
+.ptz-zoom .zbar .zfill{width:60%;height:100%;background:var(--pri);border-radius:2px}
+.ptz-zoom .zbar .zthumb{position:absolute;left:60%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--pri);box-shadow:0 0 4px rgba(0,0,0,.5)}
+.ptz-presets{display:flex;gap:8px}
+.ptz-presets .preset{padding:6px 14px;border-radius:var(--r6);background:rgba(255,255,255,.1);font:500 11px/16px 'Roboto',sans-serif;color:rgba(255,255,255,.7);cursor:pointer}
+.ptz-presets .preset.active{background:var(--pri);color:var(--on-pri)}
+
+/* -- Snapshot Gallery -- */
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 20px}
+.gallery-item{aspect-ratio:1;background:linear-gradient(135deg,#151520,#201a2a);border-radius:var(--r2);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.gallery-item .material-symbols-outlined{font-size:28px;color:rgba(255,255,255,.08)}
+.gallery-item .g-time{position:absolute;bottom:4px;right:4px;padding:1px 5px;border-radius:3px;background:rgba(0,0,0,.7);font:500 9px/14px 'Roboto',sans-serif;color:#fff}
+.gallery-item .g-select{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center}
+
+/* -- Share Sheet -- */
+.share-sheet-page{position:relative;display:flex;flex-direction:column;height:100%}
+.share-scrim{position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:5}
+.share-sheet{position:absolute;bottom:0;left:0;right:0;background:var(--sc);border-radius:var(--r5) var(--r5) 0 0;padding:20px;z-index:10}
+.share-sheet .handle{width:40px;height:4px;border-radius:2px;background:var(--olv);margin:0 auto 16px}
+.share-sheet h3{font:500 18px/24px 'Roboto',sans-serif;margin-bottom:16px}
+.share-icons{display:flex;gap:16px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+.share-icons::-webkit-scrollbar{display:none}
+.share-icon{display:flex;flex-direction:column;align-items:center;gap:8px;flex:0 0 72px;min-width:72px;max-width:72px}
+.share-icon .sic{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.share-icon .sic .material-symbols-outlined{font-size:24px;line-height:1;display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.share-icon > span{width:100%;font:400 11px/14px 'Roboto',sans-serif;color:var(--on-sfv);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.share-link-row{display:flex;gap:10px;padding:12px;background:var(--sc2);border-radius:var(--r2)}
+.share-link-row input{flex:1;background:transparent;border:none;color:var(--on-sf);font:400 13px/18px 'Roboto',sans-serif;outline:none}
+.share-link-row .material-symbols-outlined{color:var(--pri);cursor:pointer;font-size:20px}
+
+/* -- History / Playback -- */
+.hist-video{width:100%;aspect-ratio:16/9;min-height:264px;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0a12,#15101f)}
+.hist-top{position:absolute;top:0;left:0;right:0;padding:10px 12px;display:flex;align-items:center;gap:10px;background:linear-gradient(to bottom,rgba(0,0,0,.7),transparent);z-index:5}
+.hist-top .hb{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.hist-top .hb .material-symbols-outlined{color:#fff;font-size:20px}
+.hist-top .title{flex:1;min-width:0;text-align:center;font:500 14px/20px 'Roboto',sans-serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-top .hist-right{display:flex;align-items:center;flex-shrink:0}
+.hist-speed-wrap{position:relative;display:flex;align-items:center}
+.hist-speed{height:30px;padding:0 28px 0 10px;border:1px solid rgba(255,255,255,.28);border-radius:var(--r6);background:rgba(0,0,0,.35);color:#fff;font:500 11px/16px 'Roboto',sans-serif;appearance:none;-webkit-appearance:none;outline:none;cursor:pointer}
+.hist-speed-wrap .material-symbols-outlined{position:absolute;right:8px;font-size:16px;color:rgba(255,255,255,.85);pointer-events:none}
+.hist-speed option{color:#111}
+.pb-overlay{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(to top,rgba(0,0,0,.8),transparent);z-index:5}
+.pb-time{display:flex;justify-content:space-between;font:500 10px/14px 'Roboto',sans-serif;color:rgba(255,255,255,.7);margin-bottom:4px}
+.pb-bar{width:100%;height:4px;background:rgba(255,255,255,.2);border-radius:2px;position:relative;margin-bottom:6px}
+.pb-bar .fill{height:100%;background:var(--pri);border-radius:2px}
+.pb-bar .thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:var(--pri);box-shadow:0 0 4px rgba(0,0,0,.5)}
+.pb-ctrl{display:flex;justify-content:center;align-items:center;gap:20px}
+.pb-ctrl .material-symbols-outlined{color:#fff;cursor:pointer;font-size:20px}
+.pb-play{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px)}
+
+.hist-content{flex:1;background:var(--bg);border-radius:var(--r5) var(--r5) 0 0;margin-top:-14px;position:relative;z-index:2;overflow:hidden;display:flex;flex-direction:column}
+.hist-content .handle{width:40px;height:4px;border-radius:2px;background:var(--olv);margin:10px auto;flex-shrink:0}
+.date-row{display:flex;align-items:center;gap:10px;padding:6px 20px;flex-shrink:0}
+.date-nav{width:30px;height:30px;border-radius:50%;background:var(--sc);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.date-nav .material-symbols-outlined{font-size:18px;color:var(--on-sfv)}
+.date-disp{flex:1;text-align:center;font:500 14px/20px 'Roboto',sans-serif}
+.tl-bar-sec{padding:6px 20px 0;flex-shrink:0}
+.tl-bar-sec .tl-lbl{font:500 11px/16px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:6px}
+.tl-bar{height:36px;background:var(--sc0);border-radius:var(--r2);position:relative;overflow:hidden}
+.tl-bar .seg{position:absolute;top:4px;bottom:4px;border-radius:3px}
+.tl-bar .seg.n{background:rgba(100,66,214,.35)}
+.tl-bar .seg.m{background:rgba(255,158,67,.5)}
+.tl-bar .seg.a{background:rgba(255,107,107,.5)}
+.tl-bar .seek{position:absolute;top:0;bottom:0;width:2px;background:var(--pri)}
+.tl-bar .seek::before{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:10px;height:10px;border-radius:50%;background:var(--pri)}
+.tl-labels{display:flex;justify-content:space-between;padding:3px 0;font:500 9px/14px 'Roboto',sans-serif;color:var(--on-sfv)}
+.filter-row{display:flex;gap:6px;padding:8px 20px;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.tl-scroll{flex:1;overflow-y:auto;padding:0 20px 16px;scrollbar-width:none}
+.tl-scroll::-webkit-scrollbar{display:none}
+.timeline{--tl-time-col:38px;--tl-gap:4px;--tl-axis-gap:2px;--tl-gutter:calc(var(--tl-time-col) + var(--tl-gap) + var(--tl-axis-gap) * 2);--tl-axis:calc(var(--tl-time-col) + var(--tl-gap) + var(--tl-axis-gap));position:relative}
+.timeline::before{content:'';position:absolute;left:var(--tl-axis);top:0;bottom:0;width:2px;background:var(--olv)}
+.tl-item{position:relative;padding-left:var(--tl-gutter);padding-bottom:20px}
+.tl-item .td{position:absolute;left:0;top:0;width:var(--tl-time-col);padding-right:8px;text-align:right;font:500 10px/14px 'Roboto',sans-serif;color:var(--on-sfv);z-index:2}
+.tl-item .tm{position:absolute;left:calc(var(--tl-axis) - 5px);top:3px;width:10px;height:10px;border-radius:50%;background:var(--pri);border:2px solid var(--bg);z-index:2}
+.tl-item .tm.mot{background:var(--orange)}
+.tl-item .tm.alr{background:var(--red)}
+.tl-card{position:relative;z-index:1;background:var(--sc);border-radius:var(--r3);overflow:hidden}
+.tl-card .tl-thumb{width:100%;height:90px;background:linear-gradient(135deg,#1a1520,#252030);position:relative;display:flex;align-items:center;justify-content:center}
+.tl-card .tl-thumb .material-symbols-outlined{font-size:28px;color:rgba(255,255,255,.15)}
+.tl-card .tl-thumb .dur{position:absolute;bottom:5px;right:5px;padding:2px 6px;border-radius:3px;background:rgba(0,0,0,.7);font:500 10px/14px 'Roboto',sans-serif;color:#fff}
+.tl-card .tl-info{padding:8px 10px}
+.tl-card .tl-info h5{font:500 13px/18px 'Roboto',sans-serif;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-card .tl-info p{font:400 11px/16px 'Roboto',sans-serif;color:var(--on-sfv);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+
+/* -- Calendar -- */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0;text-align:center;padding:0 20px}
+.cal-grid .cal-hd{font:500 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);padding:8px 0}
+.cal-grid .cal-day{width:40px;height:40px;display:flex;align-items:center;justify-content:center;margin:0 auto;font:400 14px/20px 'Roboto',sans-serif;color:var(--on-sf);border-radius:50%;cursor:pointer}
+.cal-grid .cal-day.today{background:var(--pri);color:var(--on-pri);font-weight:500}
+.cal-grid .cal-day.has-data{position:relative}
+.cal-grid .cal-day.has-data::after{content:'';position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:var(--pri)}
+.cal-grid .cal-day.dim{color:var(--ol);opacity:.4}
+.cal-grid .cal-day.selected{border:2px solid var(--pri);font-weight:500}
+.cal-month-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px}
+.cal-month-nav h3{font:500 16px/24px 'Roboto',sans-serif}
+.cal-month-nav .mn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cal-month-nav .mn .material-symbols-outlined{font-size:20px;color:var(--on-sfv)}
+
+/* -- Event Detail -- */
+.ed-video{width:100%;aspect-ratio:16/9;min-height:248px;position:relative;background:linear-gradient(135deg,#0d0d15,#1a1525);display:flex;align-items:center;justify-content:center}
+.ed-top{position:absolute;top:0;left:0;right:0;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(0,0,0,.7),transparent);z-index:5}
+.ed-info{padding:20px}
+.ed-info h3{font:500 18px/24px 'Roboto',sans-serif;margin-bottom:4px}
+.ed-info .ed-meta{font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:16px}
+.ed-detail-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--olv)}
+.ed-detail-row .material-symbols-outlined{font-size:20px;color:var(--on-sfv)}
+.ed-detail-row .ed-dl{flex:1;min-width:0}
+.ed-detail-row .ed-dl h4{font:400 14px/20px 'Roboto',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ed-detail-row .ed-dl p{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+.ed-actions{display:flex;gap:10px;padding:20px 0}
+
+/* -- Add Camera Scan -- */
+.scan-page{display:flex;flex-direction:column;height:100%;background:linear-gradient(135deg,#0a0a12,#151020)}
+.scan-area{flex:1;position:relative;display:flex;align-items:center;justify-content:center}
+.scan-frame{width:220px;height:220px;position:relative}
+.scan-frame .corner{position:absolute;width:30px;height:30px;border-color:var(--pri);border-style:solid}
+.scan-frame .corner.tl{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+.scan-frame .corner.tr{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+.scan-frame .corner.bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+.scan-frame .corner.br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+.scan-line-anim{position:absolute;top:0;left:10px;right:10px;height:2px;background:linear-gradient(90deg,transparent,var(--pri),transparent);animation:scanmove 2s ease-in-out infinite}
+@keyframes scanmove{0%{top:0}50%{top:calc(100% - 2px)}100%{top:0}}
+.scan-hint{text-align:center;font:400 14px/20px 'Roboto',sans-serif;color:rgba(255,255,255,.7);margin-top:32px}
+.scan-bottom{padding:20px;background:var(--bg);border-radius:var(--r5) var(--r5) 0 0}
+.scan-bottom p{font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);text-align:center;margin-bottom:16px}
+
+/* -- Add Camera Setup -- */
+.step-indicator{display:flex;align-items:center;justify-content:center;gap:0;padding:16px 20px}
+.step{display:flex;align-items:center;gap:0}
+.step .sc{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:500 12px/16px 'Roboto',sans-serif}
+.step .sc.done{background:var(--pri);color:var(--on-pri)}
+.step .sc.cur{background:var(--pri);color:var(--on-pri)}
+.step .sc.pend{background:var(--sc3);color:var(--on-sfv)}
+.step .sl{width:40px;height:2px;margin:0 4px}
+.step .sl.done{background:var(--pri)}
+.step .sl.pend{background:var(--sc3)}
+.step-labels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 28px 12px;font:500 10px/14px 'Roboto',sans-serif;color:var(--on-sfv)}
+.step-labels span{text-align:center;overflow-wrap:anywhere}
+
+/* -- Camera Settings -- */
+.cs-section{padding:0 20px;margin-bottom:6px}
+.cs-title{font:500 13px/20px 'Roboto',sans-serif;color:var(--pri);padding:10px 0 2px}
+.cs-item{display:flex;align-items:center;gap:14px;padding:12px 0}
+.cs-item .material-symbols-outlined{font-size:22px;color:var(--on-sfv)}
+.cs-item .cs-text{flex:1;min-width:0}
+.cs-item .cs-text h4{font:400 15px/22px 'Roboto',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-item .cs-text p{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+.cs-item .trailing{color:var(--on-sfv)}
+
+/* -- Settings -- */
+.set-profile{display:flex;flex-direction:column;align-items:center;padding:14px 20px 20px}
+.set-profile .av-lg{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--ter));display:flex;align-items:center;justify-content:center;font:400 26px/34px 'Roboto',sans-serif;color:#fff;margin-bottom:10px}
+.set-profile h3{font:400 20px/28px 'Roboto',sans-serif;margin-bottom:2px}
+.set-profile p{font:400 14px/20px 'Roboto',sans-serif;color:var(--on-sfv)}
+.set-group{padding:0 20px;margin-bottom:6px}
+.set-gt{font:500 13px/20px 'Roboto',sans-serif;color:var(--pri);padding:10px 0 2px}
+.set-item{display:flex;align-items:center;gap:14px;padding:12px 0}
+.set-item .material-symbols-outlined{font-size:22px;color:var(--on-sfv)}
+.set-item .set-text{flex:1;min-width:0}
+.set-item .set-text h4{font:400 15px/22px 'Roboto',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.set-item .set-text p{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+.set-item .trailing{color:var(--on-sfv)}
+
+/* -- Profile -- */
+.prof-header{display:flex;flex-direction:column;align-items:center;padding:16px 20px 24px}
+.prof-header .av-xl{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--ter));display:flex;align-items:center;justify-content:center;font:400 34px/40px 'Roboto',sans-serif;color:#fff;margin-bottom:12px;position:relative}
+.prof-header .av-xl .edit-badge{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:var(--pri);display:flex;align-items:center;justify-content:center;border:3px solid var(--bg)}
+.prof-header .av-xl .edit-badge .material-symbols-outlined{font-size:14px;color:var(--on-pri)}
+
+/* -- Storage -- */
+.storage-ring{display:flex;flex-direction:column;align-items:center;padding:20px}
+.storage-ring .ring{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--pri) 0% 80%,var(--sc3) 80% 100%);display:flex;align-items:center;justify-content:center;position:relative}
+.storage-ring .ring .inner{width:96px;height:96px;border-radius:50%;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.storage-ring .ring .inner h3{font:500 24px/32px 'Roboto',sans-serif}
+.storage-ring .ring .inner p{font:400 11px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
+.storage-legend{display:flex;gap:20px;margin-top:16px}
+.storage-legend .leg{display:flex;align-items:center;gap:6px;font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
+.storage-legend .leg .ldot{width:10px;height:10px;border-radius:3px}
+.storage-bar-item{display:flex;align-items:center;gap:12px;padding:12px 20px}
+.storage-bar-item .sbi-icon{width:40px;height:40px;border-radius:var(--r2);background:var(--sc);display:flex;align-items:center;justify-content:center}
+.storage-bar-item .sbi-icon .material-symbols-outlined{font-size:20px;color:var(--on-sfv)}
+.storage-bar-item .sbi-info{flex:1;min-width:0}
+.storage-bar-item .sbi-info h4{font:400 14px/20px 'Roboto',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.storage-bar-item .sbi-info .sbi-bar{height:4px;background:var(--sc3);border-radius:2px;margin-top:4px}
+.storage-bar-item .sbi-info .sbi-bar .sbi-fill{height:100%;border-radius:2px;background:var(--pri)}
+.storage-bar-item .sbi-size{font:500 12px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
+
+/* -- Security -- */
+.sec-item{display:flex;align-items:center;gap:14px;padding:14px 20px}
+.sec-item .sec-ic{width:44px;height:44px;border-radius:50%;background:var(--sc);display:flex;align-items:center;justify-content:center}
+.sec-item .sec-ic .material-symbols-outlined{font-size:22px;color:var(--on-sfv)}
+.sec-item .sec-text{flex:1;min-width:0}
+.sec-item .sec-text h4{font:400 15px/22px 'Roboto',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec-item .sec-text p{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+
+/* -- Logic & System State Pages -- */
+.logic-page{display:flex;flex-direction:column;height:100%}
+.logic-content{flex:1;overflow-y:auto;padding:0 20px 20px;scrollbar-width:none}
+.logic-content::-webkit-scrollbar{display:none}
+.logic-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;text-align:center}
+.logic-icon{width:74px;height:74px;border-radius:22px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.logic-icon .material-symbols-outlined{font-size:34px}
+.logic-title{font:500 20px/28px 'Roboto',sans-serif;margin-bottom:6px}
+.logic-text{font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);max-width:280px}
+.logic-card{background:var(--sc);border-radius:var(--r3);padding:14px;margin-top:12px}
+.logic-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0}
+.logic-row .material-symbols-outlined{font-size:18px;color:var(--on-sfv)}
+.logic-row .rt{flex:1;min-width:0}
+.logic-row .rt h5{font:500 13px/18px 'Roboto',sans-serif}
+.logic-row .rt p{font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
+.logic-progress{width:100%;height:6px;border-radius:3px;background:var(--sc3);overflow:hidden;margin:14px 0 8px}
+.logic-progress .fill{height:100%;background:var(--pri)}
+.logic-note{font:400 11px/16px 'Roboto',sans-serif;color:var(--on-sfv);text-align:center}
+.logic-inline{display:flex;gap:8px}
+.logic-inline>*{flex:1}
+.logic-scrim{position:absolute;inset:0;background:rgba(0,0,0,.58);z-index:8}
+.logic-dialog{position:absolute;left:20px;right:20px;bottom:24px;background:var(--sc);border-radius:var(--r3);padding:16px;z-index:9}
+.logic-dialog h4{font:500 18px/24px 'Roboto',sans-serif;margin-bottom:6px}
+.logic-dialog p{font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:14px}
+.logic-perm{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--olv)}
+.logic-perm:last-child{border-bottom:none}
+.logic-perm .material-symbols-outlined{font-size:20px;color:var(--on-sfv)}
+.logic-perm .txt{flex:1;min-width:0}
+.logic-perm .txt h5{font:500 13px/18px 'Roboto',sans-serif}
+.logic-perm .txt p{font:400 11px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
+.logic-badge{padding:2px 8px;border-radius:var(--r6);font:500 10px/14px 'Roboto',sans-serif}
+.logic-badge.on{background:rgba(125,216,129,.2);color:var(--green)}
+.logic-badge.off{background:rgba(255,158,67,.2);color:var(--orange)}
+.logic-qr{width:170px;height:170px;border-radius:var(--r2);background:var(--sc);display:flex;align-items:center;justify-content:center;margin:12px auto 10px;border:1px dashed var(--ol)}
+.logic-qr .material-symbols-outlined{font-size:56px;color:var(--on-sfv);opacity:.5}
+.logic-chip-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.logic-chip-row::-webkit-scrollbar{display:none}
+@keyframes spin360{to{transform:rotate(360deg)}}
+.spin{animation:spin360 1.4s linear infinite}
+
+/* Snackbar */
+.snackbar{position:absolute;bottom:90px;left:16px;right:16px;background:var(--inv-sf);color:var(--inv-on-sf);padding:12px 16px;border-radius:var(--r2);font:400 14px/20px 'Roboto',sans-serif;display:flex;align-items:flex-start;gap:12px;z-index:20;box-shadow:var(--e3)}
+.snackbar>span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}
+.snackbar .sb-action{font:500 14px/20px 'Roboto',sans-serif;color:var(--inv-pri);cursor:pointer;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="showcase">
+<!-- ============ FLOW A: Authentication ============ -->
+<div class="flow-group">
+  <div class="flow-header"><h2>A. Auth Flow</h2></div>
+  <div class="flow-row">
+
+    <!-- A1: Splash -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="splash-bg">
+          <div class="glow glow1"></div>
+          <div class="glow glow2"></div>
+          <div class="splash-logo"><span class="material-symbols-outlined">videocam</span></div>
+          <h1>RealLive</h1>
+          <p>Smart remote monitoring at your fingertips. Secure, real-time, everywhere.</p>
+          <div class="btn-row">
+            <button class="btn-f"><span class="material-symbols-outlined" style="font-size:18px">rocket_launch</span>Get Started</button>
+            <button class="btn-o" style="border-color:rgba(255,255,255,.3);color:#fff">I already have an account</button>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Splash / Welcome</div>
+      <div class="sublbl">App first launch</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- A2: Login -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="pc">
+          <div class="login-page">
+            <div class="login-logo">
+              <div class="ico"><span class="material-symbols-outlined">videocam</span></div>
+              <h1>RealLive</h1>
+              <p>Remote Monitoring System</p>
+            </div>
+            <div class="login-form">
+              <div class="tf"><input type="email" value="admin@reallive.com"><label>Email</label><span class="ti material-symbols-outlined">mail</span></div>
+              <div class="tf"><input type="password" value="password123"><label>Password</label><span class="ti material-symbols-outlined">visibility_off</span></div>
+              <div class="forgot"><a href="#">Forgot password?</a></div>
+              <button class="btn-f"><span class="material-symbols-outlined" style="font-size:18px">login</span>Sign In</button>
+              <div class="login-dv"><span>Or continue with</span></div>
+              <div class="social-row">
+                <button class="social-btn"><span style="font-weight:700;font-size:15px">G</span>Google</button>
+                <button class="social-btn"><span class="material-symbols-outlined" style="font-size:18px">fingerprint</span>Biometric</button>
+              </div>
+            </div>
+            <div class="login-ft">Don't have an account? <a href="#">Sign Up</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Login</div>
+      <div class="sublbl">Tap "Sign In" or social login</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- A3: Register -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Create Account</div><div class="tr"></div></div>
+        <div class="pc">
+          <div class="reg-form">
+            <p class="st">Personal Information</p>
+            <div class="tf"><input value="Alex Chen"><label>Full Name</label></div>
+            <div class="tf"><input value="alex@example.com"><label>Email Address</label></div>
+            <div class="tf"><input value="+86 138 0000 0000"><label>Phone Number</label></div>
+            <p class="st">Security</p>
+            <div class="tf"><input type="password" value="securepass"><label>Password</label><span class="ti material-symbols-outlined">visibility_off</span></div>
+            <div class="tf"><input type="password" value="securepass"><label>Confirm Password</label><span class="ti material-symbols-outlined">visibility_off</span></div>
+            <p class="ht">Min 8 chars with uppercase, lowercase & numbers</p>
+            <div class="reg-terms">
+              <div class="cb ck"><span class="material-symbols-outlined" style="font-size:16px">check</span></div>
+              <p>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+            </div>
+            <button class="btn-f">Create Account</button>
+            <div style="height:30px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Register</div>
+      <div class="sublbl">From "Sign Up" link on Login</div>
+    </div>
+
+  </div>
+</div>
+<!-- ============ FLOW B: Main Hub ============ -->
+<div class="flow-group">
+  <div class="flow-header"><h2>B. Main Hub</h2></div>
+  <div class="flow-row">
+
+    <!-- B1: Dashboard -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="pc">
+          <div class="dash-hd">
+            <div class="greet"><div class="av">A</div><div class="gt"><h2>Hi, Alex</h2><p>Welcome back</p></div></div>
+            <div class="acts">
+              <div class="ib" style="position:relative"><span class="material-symbols-outlined">notifications</span><div class="nd"></div></div>
+              <div class="ib"><span class="material-symbols-outlined">search</span></div>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stc"><div class="si g"><span class="material-symbols-outlined f">videocam</span></div><div class="sn">6</div><div class="sl">Online</div></div>
+            <div class="stc"><div class="si r"><span class="material-symbols-outlined">videocam_off</span></div><div class="sn">2</div><div class="sl">Offline</div></div>
+            <div class="stc"><div class="si o"><span class="material-symbols-outlined f">motion_sensor_active</span></div><div class="sn">3</div><div class="sl">Alerts</div></div>
+          </div>
+          <div class="sh"><h3>Live Preview</h3><a href="#">See All</a></div>
+          <div class="cpsc">
+            <div class="cpc"><div class="cpt"><div class="sv" style="background:linear-gradient(135deg,#1a1825,#221d30)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">door_front</span></div></div><div class="lb"><div class="dot blink"></div>LIVE</div><div class="ts">09:41:23</div><div class="sg"></div></div><div class="cpi"><h4>Front Door</h4><div class="loc"><span class="material-symbols-outlined">location_on</span>Main Entrance</div></div></div>
+            <div class="cpc"><div class="cpt"><div class="sv" style="background:linear-gradient(135deg,#151520,#1d1828)"><div class="sl" style="animation-delay:-1s"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">garage</span></div></div><div class="lb"><div class="dot blink"></div>LIVE</div><div class="ts">09:41:23</div><div class="sg"></div></div><div class="cpi"><h4>Garage</h4><div class="loc"><span class="material-symbols-outlined">location_on</span>Side Building</div></div></div>
+            <div class="cpc"><div class="cpt"><div class="sv" style="background:linear-gradient(135deg,#12121a,#1a1522)"><div class="go"></div><div class="ri"><span class="material-symbols-outlined">deck</span></div></div><div class="ob">OFFLINE</div><div class="sg"></div></div><div class="cpi"><h4>Backyard</h4><div class="loc"><span class="material-symbols-outlined">location_on</span>Garden Area</div></div></div>
+          </div>
+          <div class="sh"><h3>All Cameras</h3><a href="#">Filter</a></div>
+          <div style="padding:0 20px">
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">door_front</span></div><div class="ci"><h4>Front Door</h4><p>Main Entrance · 1080p</p></div><div class="cs"><div class="dot rec blink"></div><span style="color:var(--orange)">REC</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">garage</span></div><div class="ci"><h4>Garage</h4><p>Side Building · 1080p</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">living</span></div><div class="ci"><h4>Living Room</h4><p>Indoor · 2K</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">deck</span></div><div class="ci"><h4>Backyard</h4><p>Garden · 1080p</p></div><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">warehouse</span></div><div class="ci"><h4>Warehouse</h4><p>Storage · 4K</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+          </div>
+          <div style="height:12px"></div>
+        </div>
+        <div class="fab"><span class="material-symbols-outlined">add</span></div>
+        <div class="nb">
+          <div class="ni a"><div class="ind"><span class="material-symbols-outlined">dashboard</span></div><span class="nl">Dashboard</span></div>
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">videocam</span></div><span class="nl">Cameras</span></div>
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">notifications</span></div><span class="nl">Alerts</span></div>
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">settings</span></div><span class="nl">Settings</span></div>
+        </div>
+      </div>
+      <div class="lbl">Dashboard</div>
+      <div class="sublbl">Main home after login</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- B2: Search -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Search</div><div class="tr"></div></div>
+        <div class="pc">
+          <div class="search-bar">
+            <span class="material-symbols-outlined">search</span>
+            <input placeholder="Search cameras, events..." value="Front">
+            <span class="material-symbols-outlined" style="font-size:18px">close</span>
+          </div>
+          <div class="search-section">
+            <h4>RECENT SEARCHES</h4>
+            <div><span class="search-tag"><span class="material-symbols-outlined" style="font-size:14px">history</span>Front Door</span><span class="search-tag"><span class="material-symbols-outlined" style="font-size:14px">history</span>Garage motion</span><span class="search-tag"><span class="material-symbols-outlined" style="font-size:14px">history</span>Person alert</span></div>
+          </div>
+          <div style="padding:0 20px;margin-top:16px"><div class="dv"></div></div>
+          <div style="padding:0 20px;margin-top:8px">
+            <h4 style="font:500 13px/20px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:8px">RESULTS</h4>
+            <div class="search-result"><div class="sr-icon"><span class="material-symbols-outlined">videocam</span></div><div class="sr-text"><h4>Front Door</h4><p>Camera · Main Entrance · Online</p></div><span class="material-symbols-outlined" style="font-size:20px;color:var(--on-sfv)">chevron_right</span></div>
+            <div class="search-result"><div class="sr-icon"><span class="material-symbols-outlined">directions_run</span></div><div class="sr-text"><h4>Motion - Front Door</h4><p>Event · Today 09:35 AM</p></div><span class="material-symbols-outlined" style="font-size:20px;color:var(--on-sfv)">chevron_right</span></div>
+            <div class="search-result"><div class="sr-icon"><span class="material-symbols-outlined">person</span></div><div class="sr-text"><h4>Person - Front Door</h4><p>Event · Today 08:52 AM</p></div><span class="material-symbols-outlined" style="font-size:20px;color:var(--on-sfv)">chevron_right</span></div>
+            <div class="search-result"><div class="sr-icon"><span class="material-symbols-outlined">photo_camera</span></div><div class="sr-text"><h4>Front Door Snapshots</h4><p>Gallery · 24 photos</p></div><span class="material-symbols-outlined" style="font-size:20px;color:var(--on-sfv)">chevron_right</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Search</div>
+      <div class="sublbl">Tap search icon on Dashboard</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- B3: Notifications -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Notifications</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">done_all</span></div><div class="ib"><span class="material-symbols-outlined">filter_list</span></div></div></div>
+        <div class="pc">
+          <div style="padding:0 20px">
+            <div class="nti ur"><div class="ni-ic alr"><span class="material-symbols-outlined">person_alert</span></div><div class="nc"><h4>Person Detected - Front Door</h4><p>An unknown person was detected at the front entrance.</p><div class="nt">2 min ago</div></div><div class="nth"><span class="material-symbols-outlined">image</span></div></div>
+            <div class="nti ur"><div class="ni-ic mot"><span class="material-symbols-outlined">directions_run</span></div><div class="nc"><h4>Motion Detected - Front Door</h4><p>Continuous motion detected for 32 seconds.</p><div class="nt">15 min ago</div></div><div class="nth"><span class="material-symbols-outlined">image</span></div></div>
+            <div class="nti"><div class="ni-ic alr"><span class="material-symbols-outlined">videocam_off</span></div><div class="nc"><h4>Camera Offline - Backyard</h4><p>Camera offline since 8:30 AM. Check connection.</p><div class="nt">1 hour ago</div></div></div>
+            <div class="nti"><div class="ni-ic mot"><span class="material-symbols-outlined">directions_run</span></div><div class="nc"><h4>Motion Detected - Garage</h4><p>Brief motion near the garage door.</p><div class="nt">3 hours ago</div></div><div class="nth"><span class="material-symbols-outlined">image</span></div></div>
+            <div class="nti"><div class="ni-ic inf"><span class="material-symbols-outlined">update</span></div><div class="nc"><h4>Firmware Update Available</h4><p>Front Door camera v2.4.1 ready.</p><div class="nt">5 hours ago</div></div></div>
+            <div class="nti"><div class="ni-ic inf"><span class="material-symbols-outlined">cloud_done</span></div><div class="nc"><h4>Cloud Storage - 80% Used</h4><p>Consider upgrading or deleting old recordings.</p><div class="nt">Yesterday</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Notifications</div>
+      <div class="sublbl">Tap bell icon on Dashboard</div>
+    </div>
+
+  </div>
+</div>
+<!-- ============ FLOW C: Camera Views ============ -->
+<div class="flow-group">
+  <div class="flow-header"><h2>C. Camera Views</h2></div>
+  <div class="flow-row">
+
+    <!-- C1: Multi Grid 2x2 -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Multi View</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">grid_view</span></div><div class="ib"><span class="material-symbols-outlined">fullscreen</span></div></div></div>
+        <div class="mg">
+          <div class="mg-cell">
+            <div class="sv" style="background:linear-gradient(135deg,#1a1825,#221d30)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">door_front</span></div></div><div class="sg"></div>
+            <div class="mg-top"><div class="lb"><div class="dot blink"></div>LIVE</div></div>
+            <div class="mg-label"><span>Front Door</span><div class="mg-status"><div class="dot blink" style="background:var(--orange)"></div><span style="font-size:9px">REC</span></div></div>
+          </div>
+          <div class="mg-cell">
+            <div class="sv" style="background:linear-gradient(135deg,#151520,#1d1828)"><div class="sl" style="animation-delay:-1.5s"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">garage</span></div></div><div class="sg"></div>
+            <div class="mg-top"><div class="lb"><div class="dot blink"></div>LIVE</div></div>
+            <div class="mg-label"><span>Garage</span><div class="mg-status"><div class="dot"></div></div></div>
+          </div>
+          <div class="mg-cell">
+            <div class="sv" style="background:linear-gradient(135deg,#151520,#1e1828)"><div class="sl" style="animation-delay:-.8s"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">living</span></div></div><div class="sg"></div>
+            <div class="mg-top"><div class="lb"><div class="dot blink"></div>LIVE</div></div>
+            <div class="mg-label"><span>Living Room</span><div class="mg-status"><div class="dot"></div></div></div>
+          </div>
+          <div class="mg-cell">
+            <div class="sv" style="background:linear-gradient(135deg,#0e0e14,#161220)"><div class="go"></div><div class="ri"><span class="material-symbols-outlined">deck</span></div></div><div class="sg"></div>
+            <div class="mg-label"><span>Backyard</span><div class="mg-status"><div class="dot" style="background:var(--red)"></div><span style="font-size:9px;color:var(--red)">OFF</span></div></div>
+          </div>
+        </div>
+        <div class="nb">
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">dashboard</span></div><span class="nl">Dashboard</span></div>
+          <div class="ni a"><div class="ind"><span class="material-symbols-outlined">videocam</span></div><span class="nl">Cameras</span></div>
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">notifications</span></div><span class="nl">Alerts</span></div>
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">settings</span></div><span class="nl">Settings</span></div>
+        </div>
+      </div>
+      <div class="lbl">Multi View (2x2)</div>
+      <div class="sublbl">Tap "Cameras" in bottom nav</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- C2: Camera Full List -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">All Cameras</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">sort</span></div></div></div>
+        <div class="cam-filter-row">
+          <div class="chip sel">All (8)</div>
+          <div class="chip"><span class="material-symbols-outlined">wifi</span>Online (6)</div>
+          <div class="chip"><span class="material-symbols-outlined">wifi_off</span>Offline (2)</div>
+          <div class="chip"><span class="material-symbols-outlined">fiber_manual_record</span>Recording</div>
+        </div>
+        <div class="pc">
+          <div style="padding:0 20px">
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">door_front</span></div><div class="ci"><h4>Front Door</h4><p>Main Entrance · 1080p · 2.4 Mbps</p></div><div class="cs"><div class="dot rec blink"></div><span style="color:var(--orange)">REC</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">garage</span></div><div class="ci"><h4>Garage</h4><p>Side Building · 1080p · 1.8 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">living</span></div><div class="ci"><h4>Living Room</h4><p>Indoor · 2K · 3.2 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">deck</span></div><div class="ci"><h4>Backyard</h4><p>Garden · 1080p</p></div><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">warehouse</span></div><div class="ci"><h4>Warehouse</h4><p>Storage · 4K · 5.1 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">bedroom_parent</span></div><div class="ci"><h4>Bedroom</h4><p>Indoor · 1080p · 1.5 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">meeting_room</span></div><div class="ci"><h4>Office</h4><p>Indoor · 2K · 2.8 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">local_parking</span></div><div class="ci"><h4>Parking Lot</h4><p>Outdoor · 1080p</p></div><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Camera List (Full)</div>
+      <div class="sublbl">Tap "See All" on Dashboard</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- C3: Live View -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div style="display:flex;flex-direction:column;height:100%;background:linear-gradient(135deg,#0f0e18,#1c1728)">
+          <div class="lv-video">
+            <div class="sv" style="background:linear-gradient(135deg,#0f0e18,#1c1728)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:72px">door_front</span></div></div>
+            <div class="lv-overlay-top"><div><div class="cn">Front Door</div><div class="ct">Main Entrance</div></div></div>
+            <div class="live-badge"><div class="dot blink"></div>LIVE</div>
+            <div class="lv-controls">
+              <button class="lv-btn"><span class="material-symbols-outlined">screenshot_monitor</span></button>
+              <button class="lv-btn"><span class="material-symbols-outlined">mic</span></button>
+              <button class="lv-btn"><span class="material-symbols-outlined">volume_up</span></button>
+              <button class="lv-btn"><span class="material-symbols-outlined">hd</span></button>
+              <button class="lv-btn"><span class="material-symbols-outlined">fullscreen</span></button>
+            </div>
+          </div>
+          <div class="lv-info">
+            <div class="handle"></div>
+            <div class="info-chips">
+              <div class="ic live"><span class="material-symbols-outlined f" style="font-size:13px">fiber_manual_record</span>Online</div>
+              <div class="ic"><span class="material-symbols-outlined">high_quality</span>1080p</div>
+              <div class="ic"><span class="material-symbols-outlined">speed</span>30fps</div>
+              <div class="ic"><span class="material-symbols-outlined">cloud_upload</span>2.4Mbps</div>
+            </div>
+            <div class="act-grid">
+              <div class="act-item"><span class="material-symbols-outlined">history</span><span>Playback</span></div>
+              <div class="act-item"><span class="material-symbols-outlined">photo_camera</span><span>Snapshot</span></div>
+              <div class="act-item"><span class="material-symbols-outlined">fiber_manual_record</span><span>Record</span></div>
+              <div class="act-item"><span class="material-symbols-outlined">share</span><span>Share</span></div>
+              <div class="act-item"><span class="material-symbols-outlined">notifications_active</span><span>Alerts</span></div>
+              <div class="act-item"><span class="material-symbols-outlined">settings</span><span>Settings</span></div>
+              <div class="act-item"><span class="material-symbols-outlined">open_with</span><span>PTZ</span></div>
+              <div class="act-item"><span class="material-symbols-outlined">cloud_download</span><span>Download</span></div>
+            </div>
+            <div class="event-section">
+              <h4>Recent Events</h4>
+              <div class="ev-item"><div class="ev-ic mot"><span class="material-symbols-outlined">directions_run</span></div><div class="ev-text"><p>Motion Detected</p><span>Today, 09:35 AM</span></div></div>
+              <div class="ev-item"><div class="ev-ic alr"><span class="material-symbols-outlined">person_alert</span></div><div class="ev-text"><p>Person Detected</p><span>Today, 08:52 AM</span></div></div>
+              <div class="ev-item"><div class="ev-ic mot"><span class="material-symbols-outlined">directions_run</span></div><div class="ev-text"><p>Motion Detected</p><span>Today, 07:20 AM</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Live View</div>
+      <div class="sublbl">Tap any camera card/item</div>
+    </div>
+
+  </div>
+</div>
+<!-- ============ FLOW D: Live View Actions ============ -->
+<div class="flow-group">
+  <div class="flow-header"><h2>D. Live View Sub-Pages</h2></div>
+  <div class="flow-row">
+
+    <!-- D1: PTZ Control -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="ptz-page">
+          <div class="ptz-video">
+            <div class="sv" style="background:linear-gradient(135deg,#0f0e18,#1c1728)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:72px">door_front</span></div></div><div class="sg"></div>
+            <div class="ptz-overlay">
+              <div class="ptz-top">
+                <div class="back"><span class="material-symbols-outlined">arrow_back</span></div>
+                <div class="title">PTZ Control</div>
+                <div class="back"><span class="material-symbols-outlined">more_vert</span></div>
+              </div>
+              <div class="ptz-bottom">
+                <div class="ptz-pad">
+                  <div class="arr up"><span class="material-symbols-outlined">keyboard_arrow_up</span></div>
+                  <div class="arr dn"><span class="material-symbols-outlined">keyboard_arrow_down</span></div>
+                  <div class="arr lt"><span class="material-symbols-outlined">keyboard_arrow_left</span></div>
+                  <div class="arr rt"><span class="material-symbols-outlined">keyboard_arrow_right</span></div>
+                  <div class="center-dot"></div>
+                </div>
+                <div class="ptz-zoom">
+                  <div class="zb"><span class="material-symbols-outlined">remove</span></div>
+                  <div class="zbar"><div class="zfill"></div><div class="zthumb"></div></div>
+                  <div class="zb"><span class="material-symbols-outlined">add</span></div>
+                </div>
+                <div class="ptz-presets">
+                  <div class="preset active">Home</div>
+                  <div class="preset">Door</div>
+                  <div class="preset">Road</div>
+                  <div class="preset">Garden</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">PTZ Control</div>
+      <div class="sublbl">Tap "PTZ" in Live View</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- D2: Snapshot Gallery -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Snapshots</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">select_all</span></div><div class="ib"><span class="material-symbols-outlined">delete</span></div></div></div>
+        <div style="padding:8px 20px 6px;font:500 13px/20px 'Roboto',sans-serif;color:var(--on-sfv)">Front Door · 24 photos</div>
+        <div style="padding:0 20px 8px;display:flex;gap:6px">
+          <div class="chip sel">All</div>
+          <div class="chip">Today</div>
+          <div class="chip">This Week</div>
+          <div class="chip">This Month</div>
+        </div>
+        <div class="pc">
+          <div style="padding:6px 20px;font:500 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:4px">Today, Feb 16</div>
+          <div class="gallery-grid">
+            <div class="gallery-item"><span class="material-symbols-outlined">door_front</span><div class="g-time">09:35</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">person</span><div class="g-time">08:52</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">directions_run</span><div class="g-time">07:20</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">door_front</span><div class="g-time">06:15</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">nightlight</span><div class="g-time">02:10</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">door_front</span><div class="g-time">00:45</div></div>
+          </div>
+          <div style="padding:10px 20px;font:500 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:4px">Yesterday, Feb 15</div>
+          <div class="gallery-grid">
+            <div class="gallery-item"><span class="material-symbols-outlined">directions_run</span><div class="g-time">22:18</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">door_front</span><div class="g-time">19:05</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">person</span><div class="g-time">17:30</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">door_front</span><div class="g-time">14:22</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">directions_run</span><div class="g-time">11:08</div></div>
+            <div class="gallery-item"><span class="material-symbols-outlined">door_front</span><div class="g-time">08:45</div></div>
+          </div>
+          <div style="height:16px"></div>
+        </div>
+        <!-- Snackbar -->
+        <div class="snackbar">
+          <span>Snapshot saved successfully</span>
+          <span class="sb-action">VIEW</span>
+        </div>
+      </div>
+      <div class="lbl">Snapshot Gallery</div>
+      <div class="sublbl">Tap "Snapshot" in Live View</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- D3: Share Bottom Sheet -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="share-sheet-page">
+          <div style="flex:1;display:flex;flex-direction:column;background:#000">
+            <div class="lv-video" style="flex:1;aspect-ratio:auto">
+              <div class="sv" style="background:linear-gradient(135deg,#0f0e18,#1c1728)"><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:72px">door_front</span></div></div>
+            </div>
+          </div>
+          <div class="share-scrim"></div>
+          <div class="share-sheet">
+            <div class="handle"></div>
+            <h3>Share Camera</h3>
+            <div class="share-icons">
+              <div class="share-icon"><div class="sic" style="background:rgba(125,216,129,.15)"><span class="material-symbols-outlined" style="color:var(--green)">chat</span></div><span>WeChat</span></div>
+              <div class="share-icon"><div class="sic" style="background:rgba(100,149,237,.15)"><span class="material-symbols-outlined" style="color:#6495ED">send</span></div><span>Telegram</span></div>
+              <div class="share-icon"><div class="sic" style="background:rgba(200,191,255,.15)"><span class="material-symbols-outlined" style="color:var(--pri)">mail</span></div><span>Email</span></div>
+              <div class="share-icon"><div class="sic" style="background:rgba(255,158,67,.15)"><span class="material-symbols-outlined" style="color:var(--orange)">sms</span></div><span>SMS</span></div>
+              <div class="share-icon"><div class="sic" style="background:rgba(200,191,255,.1)"><span class="material-symbols-outlined" style="color:var(--on-sfv)">more_horiz</span></div><span>More</span></div>
+            </div>
+            <div style="font:500 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:8px">Or share via link</div>
+            <div class="share-link-row">
+              <input value="https://reallive.app/share/a8f3k2" readonly>
+              <span class="material-symbols-outlined">content_copy</span>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button class="btn-tonal" style="flex:1"><span class="material-symbols-outlined" style="font-size:18px">lock</span>View Only</button>
+              <button class="btn-o" style="flex:1;width:auto"><span class="material-symbols-outlined" style="font-size:18px">timer</span>24h Link</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Share Bottom Sheet</div>
+      <div class="sublbl">Tap "Share" in Live View</div>
+    </div>
+
+  </div>
+</div>
+<!-- ============ FLOW E: Playback ============ -->
+<div class="flow-group">
+  <div class="flow-header"><h2>E. History &amp; Playback</h2></div>
+  <div class="flow-row">
+
+    <!-- E1: History Playback -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div style="display:flex;flex-direction:column;height:100%;background:linear-gradient(135deg,#0c0b14,#171220)">
+          <div class="hist-video">
+            <div class="sv" style="background:linear-gradient(135deg,#0c0b14,#171220)"><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:72px">door_front</span></div></div>
+            <div class="hist-top">
+              <div class="hb"><span class="material-symbols-outlined">arrow_back</span></div>
+              <div class="title">Front Door</div>
+              <div class="hist-right">
+                <div class="hist-speed-wrap">
+                  <select class="hist-speed" aria-label="Playback speed">
+                    <option>0.5x</option>
+                    <option selected>1x</option>
+                    <option>2x</option>
+                    <option>4x</option>
+                    <option>8x</option>
+                  </select>
+                  <span class="material-symbols-outlined">expand_more</span>
+                </div>
+              </div>
+            </div>
+            <div class="pb-overlay">
+              <div class="pb-time"><span>08:23:15</span><span>23:59:59</span></div>
+              <div class="pb-bar"><div class="fill" style="width:35%"></div><div class="thumb" style="left:35%"></div></div>
+              <div class="pb-ctrl">
+                <span class="material-symbols-outlined" style="font-size:20px">skip_previous</span>
+                <span class="material-symbols-outlined" style="font-size:20px">fast_rewind</span>
+                <div class="pb-play"><span class="material-symbols-outlined" style="color:#fff;font-size:26px">pause</span></div>
+                <span class="material-symbols-outlined" style="font-size:20px">fast_forward</span>
+                <span class="material-symbols-outlined" style="font-size:20px">skip_next</span>
+              </div>
+            </div>
+          </div>
+          <div class="hist-content">
+            <div class="handle"></div>
+            <div class="date-row"><div class="date-nav"><span class="material-symbols-outlined">chevron_left</span></div><div class="date-disp"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px">calendar_today</span>Feb 15, 2026</div><div class="date-nav"><span class="material-symbols-outlined">chevron_right</span></div></div>
+            <div class="tl-bar-sec">
+              <div class="tl-lbl">24h Timeline</div>
+              <div class="tl-bar">
+                <div class="seg n" style="left:0%;width:8%"></div><div class="seg m" style="left:10%;width:3%"></div><div class="seg n" style="left:13%;width:12%"></div>
+                <div class="seg n" style="left:28%;width:6%"></div><div class="seg a" style="left:36%;width:2%"></div><div class="seg n" style="left:38%;width:15%"></div>
+                <div class="seg m" style="left:56%;width:4%"></div><div class="seg n" style="left:60%;width:20%"></div><div class="seg m" style="left:82%;width:3%"></div><div class="seg n" style="left:85%;width:10%"></div>
+                <div class="seek" style="left:35%"></div>
+              </div>
+              <div class="tl-labels"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+            </div>
+            <div class="filter-row"><div class="chip sel">All</div><div class="chip"><span class="material-symbols-outlined">directions_run</span>Motion</div><div class="chip"><span class="material-symbols-outlined">person</span>Person</div><div class="chip"><span class="material-symbols-outlined">warning</span>Alert</div></div>
+            <div class="tl-scroll">
+              <div class="timeline">
+                <div class="tl-item"><div class="td">09:35</div><div class="tm mot"></div><div class="tl-card"><div class="tl-thumb"><span class="material-symbols-outlined">directions_run</span><div class="dur">0:32</div><div class="sg"></div></div><div class="tl-info"><h5>Motion Detected</h5><p>Movement at entrance area</p></div></div></div>
+                <div class="tl-item"><div class="td">08:52</div><div class="tm alr"></div><div class="tl-card"><div class="tl-thumb" style="background:linear-gradient(135deg,#1f1520,#2a1d30)"><span class="material-symbols-outlined">person</span><div class="dur">1:15</div><div class="sg"></div></div><div class="tl-info"><h5>Person Detected</h5><p>Unknown person at front door</p></div></div></div>
+                <div class="tl-item"><div class="td">07:20</div><div class="tm mot"></div><div class="tl-card"><div class="tl-thumb"><span class="material-symbols-outlined">directions_run</span><div class="dur">0:18</div><div class="sg"></div></div><div class="tl-info"><h5>Motion Detected</h5><p>Animal movement</p></div></div></div>
+                <div class="tl-item"><div class="td">02:10</div><div class="tm"></div><div class="tl-card"><div class="tl-thumb" style="background:linear-gradient(135deg,#0f0e16,#181420)"><span class="material-symbols-outlined">nightlight</span><div class="dur">0:45</div><div class="sg"></div></div><div class="tl-info"><h5>Night Vision Activated</h5><p>IR mode auto-switched</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">History Playback</div>
+      <div class="sublbl">Tap "Playback" in Live View</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- E2: Calendar Date Picker -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">close</span></div><div class="tt">Select Date</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">edit_calendar</span></div></div></div>
+        <div class="pc">
+          <div class="cal-month-nav"><div class="mn"><span class="material-symbols-outlined">chevron_left</span></div><h3>February 2026</h3><div class="mn"><span class="material-symbols-outlined">chevron_right</span></div></div>
+          <div class="cal-grid">
+            <div class="cal-hd">S</div><div class="cal-hd">M</div><div class="cal-hd">T</div><div class="cal-hd">W</div><div class="cal-hd">T</div><div class="cal-hd">F</div><div class="cal-hd">S</div>
+            <div class="cal-day dim">1</div><div class="cal-day has-data">2</div><div class="cal-day has-data">3</div><div class="cal-day has-data">4</div><div class="cal-day has-data">5</div><div class="cal-day has-data">6</div><div class="cal-day">7</div>
+            <div class="cal-day has-data">8</div><div class="cal-day has-data">9</div><div class="cal-day has-data">10</div><div class="cal-day has-data">11</div><div class="cal-day has-data">12</div><div class="cal-day has-data">13</div><div class="cal-day">14</div>
+            <div class="cal-day selected has-data">15</div><div class="cal-day today has-data">16</div><div class="cal-day">17</div><div class="cal-day">18</div><div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day">21</div>
+            <div class="cal-day">22</div><div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div>
+          </div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:var(--pri)"></div><span style="font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv)">Has recording data</span></div>
+            <div class="dv"></div>
+            <div style="font:500 14px/20px 'Roboto',sans-serif;margin-bottom:4px">Selected: Feb 15, 2026</div>
+            <div style="font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv)">12 events · 4h 32m recording</div>
+            <div style="margin-top:8px"><button class="btn-f">Confirm Date</button></div>
+            <button class="btn-o">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Calendar Picker</div>
+      <div class="sublbl">Tap date in History Playback</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- E3: Event Detail -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div style="display:flex;flex-direction:column;height:100%">
+          <div class="ed-video">
+            <div class="sv" style="background:linear-gradient(135deg,#0d0d15,#1a1525)"><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:60px">person</span></div></div><div class="sg"></div>
+            <div class="ed-top"><div class="hb" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer"><span class="material-symbols-outlined" style="color:#fff;font-size:20px">arrow_back</span></div><div style="font:500 14px/20px 'Roboto',sans-serif;color:#fff">Event Detail</div><div class="hb" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer"><span class="material-symbols-outlined" style="color:#fff;font-size:20px">more_vert</span></div></div>
+            <!-- Play button overlay -->
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:4"><div style="width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)"><span class="material-symbols-outlined" style="color:#fff;font-size:32px">play_arrow</span></div></div>
+            <div style="position:absolute;bottom:8px;right:8px;padding:3px 8px;border-radius:4px;background:rgba(0,0,0,.7);font:500 11px/16px 'Roboto',sans-serif;color:#fff;z-index:4">1:15</div>
+          </div>
+          <div class="pc" style="background:var(--bg)">
+            <div class="ed-info">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div style="padding:4px 10px;border-radius:var(--r6);background:rgba(255,107,107,.15);font:500 12px/16px 'Roboto',sans-serif;color:var(--red)">Person Detected</div><div style="padding:4px 10px;border-radius:var(--r6);background:var(--sc);font:500 12px/16px 'Roboto',sans-serif;color:var(--on-sfv)">High Priority</div></div>
+              <h3>Unknown Person at Front Door</h3>
+              <div class="ed-meta">Feb 15, 2026 · 08:52:14 AM · Duration: 1m 15s</div>
+              <div class="ed-detail-row"><span class="material-symbols-outlined">videocam</span><div class="ed-dl"><h4>Front Door</h4><p>Main Entrance · 1080p</p></div></div>
+              <div class="ed-detail-row"><span class="material-symbols-outlined">motion_sensor_active</span><div class="ed-dl"><h4>Detection Zone</h4><p>Zone A - Entrance Area</p></div></div>
+              <div class="ed-detail-row"><span class="material-symbols-outlined">analytics</span><div class="ed-dl"><h4>Confidence</h4><p>Person: 94% · Face: Not recognized</p></div></div>
+              <div class="ed-detail-row"><span class="material-symbols-outlined">cloud_done</span><div class="ed-dl"><h4>Storage</h4><p>Cloud saved · 8.2 MB</p></div></div>
+              <div class="ed-actions">
+                <button class="btn-f" style="flex:1"><span class="material-symbols-outlined" style="font-size:18px">cloud_download</span>Download Clip</button>
+                <button class="btn-o" style="flex:1;width:auto"><span class="material-symbols-outlined" style="font-size:18px">share</span>Share</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Event Detail</div>
+      <div class="sublbl">Tap event in timeline</div>
+    </div>
+
+  </div>
+</div>
+<!-- ============ FLOW F: Camera Management ============ -->
+<div class="flow-group">
+  <div class="flow-header"><h2>F. Camera Management</h2></div>
+  <div class="flow-row">
+
+    <!-- F1: Add Camera Scan -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="scan-page">
+          <div style="position:absolute;top:40px;left:0;right:0;z-index:5;padding:0 12px">
+            <div class="tab"><div class="ld"><span class="material-symbols-outlined" style="color:#fff">close</span></div><div class="tt" style="color:#fff">Add Camera</div><div class="tr"><div class="ib"><span class="material-symbols-outlined" style="color:#fff">flash_off</span></div></div></div>
+          </div>
+          <div class="scan-area">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0a0a12,#151020)"></div>
+            <div class="scan-frame">
+              <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+              <div class="scan-line-anim"></div>
+            </div>
+            <div class="scan-hint">Align QR code from camera within the frame</div>
+          </div>
+          <div class="scan-bottom">
+            <p>Scan the QR code on your camera device or its packaging</p>
+            <button class="btn-tonal" style="margin-bottom:10px"><span class="material-symbols-outlined" style="font-size:18px">edit</span>Enter code manually</button>
+            <button class="btn-o"><span class="material-symbols-outlined" style="font-size:18px">wifi_find</span>Search nearby devices</button>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Add Camera (Scan)</div>
+      <div class="sublbl">Tap FAB "+" on Dashboard</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- F2: Add Camera Setup -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Camera Setup</div><div class="tr"></div></div>
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step"><div class="sc done"><span class="material-symbols-outlined" style="font-size:16px">check</span></div><div class="sl done"></div></div>
+          <div class="step"><div class="sc cur">2</div><div class="sl pend"></div></div>
+          <div class="step"><div class="sc pend">3</div></div>
+        </div>
+        <div class="step-labels"><span>Scan</span><span>Configure</span><span>Done</span></div>
+        <div class="pc">
+          <div style="padding:0 24px">
+            <div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--sc);border-radius:var(--r3);margin-bottom:20px">
+              <div style="width:48px;height:48px;border-radius:var(--r2);background:rgba(125,216,129,.12);display:flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="color:var(--green)">check_circle</span></div>
+              <div style="flex:1"><div style="font:500 14px/20px 'Roboto',sans-serif">Device Found</div><div style="font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv)">RealLive Cam Pro · SN: RL-2026-A8F3</div></div>
+            </div>
+            <div style="font:500 15px/22px 'Roboto',sans-serif;margin-bottom:12px">Camera Details</div>
+            <div class="tf"><input value="Backyard Camera"><label>Camera Name</label></div>
+            <div class="tf">
+              <select style="appearance:none"><option>Outdoor</option></select>
+              <label>Location Type</label>
+              <span class="ti material-symbols-outlined">expand_more</span>
+            </div>
+            <div class="tf"><input value="Garden Area"><label>Location Description</label></div>
+            <div style="font:500 15px/22px 'Roboto',sans-serif;margin:8px 0 12px">Wi-Fi Network</div>
+            <div class="tf"><input value="Home_WiFi_5G"><label>Network Name (SSID)</label><span class="ti material-symbols-outlined">wifi</span></div>
+            <div class="tf"><input type="password" value="password"><label>Wi-Fi Password</label><span class="ti material-symbols-outlined">visibility_off</span></div>
+            <div style="font:500 15px/22px 'Roboto',sans-serif;margin:8px 0 12px">Settings</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0"><span style="font:400 15px/22px 'Roboto',sans-serif">Resolution</span><div class="chip sel" style="height:28px;font-size:12px">1080p</div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0"><span style="font:400 15px/22px 'Roboto',sans-serif">Night Vision</span><div class="sw on"></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0"><span style="font:400 15px/22px 'Roboto',sans-serif">Motion Detection</span><div class="sw on"></div></div>
+            <div style="margin-top:20px"><button class="btn-f"><span class="material-symbols-outlined" style="font-size:18px">wifi_protected_setup</span>Connect Camera</button></div>
+            <div style="height:24px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Camera Setup</div>
+      <div class="sublbl">After QR scan success</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- F3: Camera Settings -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Camera Settings</div><div class="tr"></div></div>
+        <div class="pc">
+          <!-- Camera preview -->
+          <div style="margin:0 20px 16px;height:120px;border-radius:var(--r3);overflow:hidden;position:relative;background:linear-gradient(135deg,#1a1825,#221d30);display:flex;align-items:center;justify-content:center">
+            <div class="sv"><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:40px">door_front</span></div></div>
+            <div style="position:absolute;bottom:8px;left:10px;font:500 13px/18px 'Roboto',sans-serif;color:#fff">Front Door</div>
+            <div style="position:absolute;bottom:8px;right:10px;display:flex;align-items:center;gap:4px"><div class="dot on" style="width:6px;height:6px;border-radius:50%"></div><span style="font:500 11px/16px 'Roboto',sans-serif;color:var(--green)">Online</span></div>
+          </div>
+          <div class="cs-section">
+            <div class="cs-title">General</div>
+            <div class="cs-item"><span class="material-symbols-outlined">badge</span><div class="cs-text"><h4>Camera Name</h4><p>Front Door</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="cs-item"><span class="material-symbols-outlined">location_on</span><div class="cs-text"><h4>Location</h4><p>Main Entrance</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="cs-item"><span class="material-symbols-outlined">high_quality</span><div class="cs-text"><h4>Resolution</h4><p>1080p (1920x1080)</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+          </div>
+          <div class="cs-section">
+            <div class="cs-title">Detection</div>
+            <div class="cs-item"><span class="material-symbols-outlined">motion_sensor_active</span><div class="cs-text"><h4>Motion Detection</h4><p>Sensitivity: High</p></div><div class="sw on"></div></div>
+            <div class="cs-item"><span class="material-symbols-outlined">person_search</span><div class="cs-text"><h4>Person Detection</h4><p>AI-powered alerts</p></div><div class="sw on"></div></div>
+            <div class="cs-item"><span class="material-symbols-outlined">volume_up</span><div class="cs-text"><h4>Sound Detection</h4><p>Alert on loud sounds</p></div><div class="sw"></div></div>
+            <div class="cs-item"><span class="material-symbols-outlined">select_all</span><div class="cs-text"><h4>Detection Zones</h4><p>2 zones configured</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+          </div>
+          <div class="cs-section">
+            <div class="cs-title">Video</div>
+            <div class="cs-item"><span class="material-symbols-outlined">nightlight</span><div class="cs-text"><h4>Night Vision</h4><p>Auto</p></div><div class="sw on"></div></div>
+            <div class="cs-item"><span class="material-symbols-outlined">flip_camera_android</span><div class="cs-text"><h4>Image Flip</h4><p>Normal orientation</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="cs-item"><span class="material-symbols-outlined">water_drop</span><div class="cs-text"><h4>Watermark</h4><p>Timestamp enabled</p></div><div class="sw on"></div></div>
+          </div>
+          <div class="cs-section">
+            <div class="cs-title">Network</div>
+            <div class="cs-item"><span class="material-symbols-outlined">wifi</span><div class="cs-text"><h4>Wi-Fi</h4><p>Home_WiFi_5G · -42 dBm</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="cs-item"><span class="material-symbols-outlined">system_update</span><div class="cs-text"><h4>Firmware</h4><p>v2.3.8 · Update available</p></div><span style="font:500 12px/16px 'Roboto',sans-serif;color:var(--pri)">Update</span></div>
+          </div>
+          <div style="padding:16px 20px"><button class="btn-o" style="color:var(--red);border-color:var(--red)"><span class="material-symbols-outlined" style="font-size:18px">delete</span>Remove Camera</button></div>
+          <div style="height:16px"></div>
+        </div>
+      </div>
+      <div class="lbl">Camera Settings</div>
+      <div class="sublbl">Tap "Settings" in Live View</div>
+    </div>
+
+  </div>
+</div>
+<!-- ============ FLOW G: Settings Sub-pages ============ -->
+<div class="flow-group">
+  <div class="flow-header"><h2>G. Settings &amp; Account</h2></div>
+  <div class="flow-row">
+
+    <!-- G1: Settings Main -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"></div><div class="tt">Settings</div><div class="tr"></div></div>
+        <div class="pc">
+          <div class="set-profile">
+            <div class="av-lg">A</div>
+            <h3>Alex Chen</h3>
+            <p>alex@example.com</p>
+          </div>
+          <div class="set-group">
+            <div class="set-gt">Notifications</div>
+            <div class="set-item"><span class="material-symbols-outlined">notifications_active</span><div class="set-text"><h4>Push Notifications</h4><p>Receive real-time alerts</p></div><div class="sw on"></div></div>
+            <div class="set-item"><span class="material-symbols-outlined">directions_run</span><div class="set-text"><h4>Motion Alerts</h4><p>Notify on motion detection</p></div><div class="sw on"></div></div>
+            <div class="set-item"><span class="material-symbols-outlined">person_alert</span><div class="set-text"><h4>Person Detection</h4><p>AI-powered person alerts</p></div><div class="sw on"></div></div>
+            <div class="set-item"><span class="material-symbols-outlined">volume_up</span><div class="set-text"><h4>Sound Alerts</h4><p>Notify on unusual sounds</p></div><div class="sw"></div></div>
+          </div>
+          <div class="set-group">
+            <div class="set-gt">Storage</div>
+            <div class="set-item"><span class="material-symbols-outlined">cloud</span><div class="set-text"><h4>Cloud Storage</h4><p>80% of 100 GB used</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="set-item"><span class="material-symbols-outlined">sd_storage</span><div class="set-text"><h4>Local Storage</h4><p>Manage SD card recordings</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+          </div>
+          <div class="set-group">
+            <div class="set-gt">General</div>
+            <div class="set-item"><span class="material-symbols-outlined">dark_mode</span><div class="set-text"><h4>Dark Mode</h4><p>Always on</p></div><div class="sw on"></div></div>
+            <div class="set-item"><span class="material-symbols-outlined">language</span><div class="set-text"><h4>Language</h4><p>English</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="set-item"><span class="material-symbols-outlined">security</span><div class="set-text"><h4>Security</h4><p>Biometric, PIN, 2FA</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="set-item"><span class="material-symbols-outlined">info</span><div class="set-text"><h4>About</h4><p>Version 1.0.0</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="set-item" style="margin-top:6px"><span class="material-symbols-outlined" style="color:var(--red)">logout</span><div class="set-text"><h4 style="color:var(--red)">Sign Out</h4></div></div>
+          </div>
+          <div style="height:16px"></div>
+        </div>
+        <div class="nb">
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">dashboard</span></div><span class="nl">Dashboard</span></div>
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">videocam</span></div><span class="nl">Cameras</span></div>
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">notifications</span></div><span class="nl">Alerts</span></div>
+          <div class="ni a"><div class="ind"><span class="material-symbols-outlined">settings</span></div><span class="nl">Settings</span></div>
+        </div>
+      </div>
+      <div class="lbl">Settings</div>
+      <div class="sublbl">Bottom nav "Settings"</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- G2: Profile -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Profile</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">edit</span></div></div></div>
+        <div class="pc">
+          <div class="prof-header">
+            <div class="av-xl">A<div class="edit-badge"><span class="material-symbols-outlined">photo_camera</span></div></div>
+            <h3 style="font:400 22px/28px 'Roboto',sans-serif;margin-bottom:2px">Alex Chen</h3>
+            <p style="font:400 14px/20px 'Roboto',sans-serif;color:var(--on-sfv)">alex@example.com</p>
+          </div>
+          <div style="padding:0 20px">
+            <div style="background:var(--sc);border-radius:var(--r3);padding:16px;margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <div style="font:500 14px/20px 'Roboto',sans-serif">Subscription Plan</div>
+                <div style="padding:4px 12px;border-radius:var(--r6);background:linear-gradient(135deg,var(--pri),var(--ter));font:500 11px/16px 'Roboto',sans-serif;color:#fff">PRO</div>
+              </div>
+              <div style="font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:8px">Up to 16 cameras · 100GB cloud · AI Detection</div>
+              <div style="font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv)">Renews: Mar 15, 2026</div>
+            </div>
+          </div>
+          <div class="set-group">
+            <div class="set-gt">Account</div>
+            <div class="set-item"><span class="material-symbols-outlined">person</span><div class="set-text"><h4>Full Name</h4><p>Alex Chen</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="set-item"><span class="material-symbols-outlined">mail</span><div class="set-text"><h4>Email</h4><p>alex@example.com</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="set-item"><span class="material-symbols-outlined">phone</span><div class="set-text"><h4>Phone</h4><p>+86 138 0000 0000</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="set-item"><span class="material-symbols-outlined">lock</span><div class="set-text"><h4>Change Password</h4><p>Last changed 30 days ago</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+          </div>
+          <div class="set-group">
+            <div class="set-gt">Linked Accounts</div>
+            <div class="set-item"><span style="font-weight:700;font-size:20px;width:22px;text-align:center;color:var(--on-sfv)">G</span><div class="set-text"><h4>Google</h4><p>alex.chen@gmail.com</p></div><span style="font:500 12px/16px 'Roboto',sans-serif;color:var(--green)">Linked</span></div>
+            <div class="set-item"><span class="material-symbols-outlined">fingerprint</span><div class="set-text"><h4>Biometric</h4><p>Face ID enabled</p></div><span style="font:500 12px/16px 'Roboto',sans-serif;color:var(--green)">Active</span></div>
+          </div>
+          <div style="padding:16px 20px"><button class="btn-o" style="color:var(--red);border-color:var(--red)"><span class="material-symbols-outlined" style="font-size:18px">delete_forever</span>Delete Account</button></div>
+          <div style="height:16px"></div>
+        </div>
+      </div>
+      <div class="lbl">Profile / Account</div>
+      <div class="sublbl">Tap avatar in Settings</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- G3: Storage Management -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Cloud Storage</div><div class="tr"></div></div>
+        <div class="pc">
+          <div class="storage-ring">
+            <div class="ring"><div class="inner"><h3>80%</h3><p>80 / 100 GB</p></div></div>
+            <div class="storage-legend">
+              <div class="leg"><div class="ldot" style="background:var(--pri)"></div>Used</div>
+              <div class="leg"><div class="ldot" style="background:var(--sc3)"></div>Free</div>
+            </div>
+          </div>
+          <div class="dv" style="margin:0 20px"></div>
+          <div style="padding:12px 20px;font:500 14px/20px 'Roboto',sans-serif">Storage by Camera</div>
+          <div class="storage-bar-item"><div class="sbi-icon"><span class="material-symbols-outlined">door_front</span></div><div class="sbi-info"><h4>Front Door</h4><div class="sbi-bar"><div class="sbi-fill" style="width:35%"></div></div></div><div class="sbi-size">28 GB</div></div>
+          <div class="storage-bar-item"><div class="sbi-icon"><span class="material-symbols-outlined">garage</span></div><div class="sbi-info"><h4>Garage</h4><div class="sbi-bar"><div class="sbi-fill" style="width:22%"></div></div></div><div class="sbi-size">17.6 GB</div></div>
+          <div class="storage-bar-item"><div class="sbi-icon"><span class="material-symbols-outlined">living</span></div><div class="sbi-info"><h4>Living Room</h4><div class="sbi-bar"><div class="sbi-fill" style="width:18%"></div></div></div><div class="sbi-size">14.4 GB</div></div>
+          <div class="storage-bar-item"><div class="sbi-icon"><span class="material-symbols-outlined">warehouse</span></div><div class="sbi-info"><h4>Warehouse</h4><div class="sbi-bar"><div class="sbi-fill" style="width:15%"></div></div></div><div class="sbi-size">12 GB</div></div>
+          <div class="storage-bar-item"><div class="sbi-icon"><span class="material-symbols-outlined">bedroom_parent</span></div><div class="sbi-info"><h4>Bedroom</h4><div class="sbi-bar"><div class="sbi-fill" style="width:10%"></div></div></div><div class="sbi-size">8 GB</div></div>
+          <div class="dv" style="margin:8px 20px"></div>
+          <div style="padding:8px 20px;display:flex;flex-direction:column;gap:10px">
+            <button class="btn-tonal"><span class="material-symbols-outlined" style="font-size:18px">auto_delete</span>Auto-delete recordings older than 30 days</button>
+            <button class="btn-o"><span class="material-symbols-outlined" style="font-size:18px">upgrade</span>Upgrade to 500 GB Plan</button>
+          </div>
+          <div style="height:16px"></div>
+        </div>
+      </div>
+      <div class="lbl">Storage Management</div>
+      <div class="sublbl">Tap "Cloud Storage" in Settings</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- G4: Security Settings -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Security</div><div class="tr"></div></div>
+        <div class="pc">
+          <!-- Security Score -->
+          <div style="padding:16px 20px;display:flex;flex-direction:column;align-items:center">
+            <div style="width:100px;height:100px;border-radius:50%;background:conic-gradient(var(--green) 0% 85%,var(--sc3) 85% 100%);display:flex;align-items:center;justify-content:center"><div style="width:80px;height:80px;border-radius:50%;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font:500 22px/28px 'Roboto',sans-serif;color:var(--green)">85</span><span style="font:500 10px/14px 'Roboto',sans-serif;color:var(--on-sfv)">Good</span></div></div>
+            <div style="font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);margin-top:10px;text-align:center">Your account security is good. Enable 2FA for maximum protection.</div>
+          </div>
+          <div class="dv" style="margin:4px 20px"></div>
+          <div style="padding:8px 0">
+            <div class="sec-item"><div class="sec-ic"><span class="material-symbols-outlined">fingerprint</span></div><div class="sec-text"><h4>Biometric Login</h4><p>Face ID / Fingerprint</p></div><div class="sw on"></div></div>
+            <div class="sec-item"><div class="sec-ic"><span class="material-symbols-outlined">pin</span></div><div class="sec-text"><h4>App PIN</h4><p>6-digit PIN enabled</p></div><div class="sw on"></div></div>
+            <div class="sec-item"><div class="sec-ic" style="background:rgba(255,158,67,.12)"><span class="material-symbols-outlined" style="color:var(--orange)">verified_user</span></div><div class="sec-text"><h4>Two-Factor Auth (2FA)</h4><p style="color:var(--orange)">Not enabled - Recommended</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="sec-item"><div class="sec-ic"><span class="material-symbols-outlined">lock_clock</span></div><div class="sec-text"><h4>Auto-lock</h4><p>Lock after 1 minute</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="sec-item"><div class="sec-ic"><span class="material-symbols-outlined">key</span></div><div class="sec-text"><h4>Change Password</h4><p>Last changed 30 days ago</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="sec-item"><div class="sec-ic"><span class="material-symbols-outlined">devices</span></div><div class="sec-text"><h4>Active Sessions</h4><p>3 devices logged in</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="sec-item"><div class="sec-ic"><span class="material-symbols-outlined">history</span></div><div class="sec-text"><h4>Login History</h4><p>View recent login activity</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+          </div>
+          <div style="height:16px"></div>
+        </div>
+      </div>
+      <div class="lbl">Security Settings</div>
+      <div class="sublbl">Tap "Security" in Settings</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ FLOW H: System States & Edge Cases ============ -->
+<div class="flow-group">
+  <div class="flow-header"><h2>H. System States &amp; Edge Cases</h2></div>
+  <div class="flow-row">
+
+    <!-- H1: Forgot Password -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Reset Password</div><div class="tr"></div></div>
+        <div class="pc">
+          <div style="padding:0 24px">
+            <div style="font:500 18px/24px 'Roboto',sans-serif;margin:8px 0 6px">Forgot your password?</div>
+            <p style="font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:14px">Enter your account email and we will send a 6-digit verification code.</p>
+            <div class="tf"><input type="email" value="alex@example.com"><label>Email Address</label></div>
+            <button class="btn-f"><span class="material-symbols-outlined" style="font-size:18px">mail</span>Send Verification Code</button>
+            <div class="dv" style="margin:18px 0 14px"></div>
+            <div class="tf"><input value="123456"><label>Verification Code</label></div>
+            <div class="tf"><input type="password" value="newPassword123"><label>New Password</label></div>
+            <div class="tf"><input type="password" value="newPassword123"><label>Confirm Password</label></div>
+            <button class="btn-f">Reset Password</button>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Forgot Password</div>
+      <div class="sublbl">From Login "Forgot password?"</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- H2: Connecting Device -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Connecting Device</div><div class="tr"></div></div>
+        <div class="logic-page">
+          <div class="logic-content">
+            <div class="logic-center">
+              <div class="logic-icon" style="background:rgba(200,191,255,.15)"><span class="material-symbols-outlined spin" style="color:var(--pri)">progress_activity</span></div>
+              <div class="logic-title">Connecting Camera...</div>
+              <div class="logic-text">Setting up Backyard Camera and joining network Home_WiFi_5G.</div>
+              <div class="logic-progress"><div class="fill" style="width:62%"></div></div>
+              <div class="logic-note">Step 2 of 3 · This may take up to 30 seconds</div>
+            </div>
+            <div class="logic-card">
+              <div class="logic-row"><span class="material-symbols-outlined" style="color:var(--green)">check_circle</span><div class="rt"><h5>Device verified</h5><p>QR code and serial number matched</p></div></div>
+              <div class="logic-row"><span class="material-symbols-outlined" style="color:var(--pri)">wifi</span><div class="rt"><h5>Connecting to Wi-Fi</h5><p>Authenticating network credentials</p></div></div>
+              <div class="logic-row"><span class="material-symbols-outlined">cloud_upload</span><div class="rt"><h5>Syncing cloud profile</h5><p>Pending</p></div></div>
+            </div>
+            <div style="margin-top:14px"><button class="btn-o">Cancel Setup</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Connect Camera - In Progress</div>
+      <div class="sublbl">After tapping "Connect Camera"</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- H3: Setup Success -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"></div><div class="tt">Setup Complete</div><div class="tr"></div></div>
+        <div class="logic-page">
+          <div class="logic-content">
+            <div class="logic-center">
+              <div class="logic-icon" style="background:rgba(125,216,129,.15)"><span class="material-symbols-outlined" style="color:var(--green)">check_circle</span></div>
+              <div class="logic-title">Camera Added Successfully</div>
+              <div class="logic-text">Backyard Camera is now online and ready for live monitoring.</div>
+            </div>
+            <div class="logic-card" style="margin-top:0">
+              <div class="logic-row"><span class="material-symbols-outlined">videocam</span><div class="rt"><h5>Backyard Camera</h5><p>Outdoor · Garden Area</p></div></div>
+              <div class="logic-row"><span class="material-symbols-outlined">high_quality</span><div class="rt"><h5>Default stream</h5><p>1080p · 30fps</p></div></div>
+              <div class="logic-row"><span class="material-symbols-outlined">fiber_manual_record</span><div class="rt"><h5>Recording mode</h5><p>Motion-triggered</p></div></div>
+            </div>
+            <div class="logic-inline" style="margin-top:14px">
+              <button class="btn-tonal">Back to Cameras</button>
+              <button class="btn-f">Open Live View</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Connect Camera - Success</div>
+      <div class="sublbl">Step 3 "Done" state</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- H4: Setup Failed -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Connection Failed</div><div class="tr"></div></div>
+        <div class="logic-page">
+          <div class="logic-content">
+            <div class="logic-center">
+              <div class="logic-icon" style="background:rgba(255,107,107,.15)"><span class="material-symbols-outlined" style="color:var(--red)">error</span></div>
+              <div class="logic-title">Could not add device</div>
+              <div class="logic-text">The camera did not finish pairing within the time limit.</div>
+            </div>
+            <div class="logic-card" style="margin-top:0">
+              <div class="logic-row"><span class="material-symbols-outlined">wifi_off</span><div class="rt"><h5>Network authentication failed</h5><p>Check Wi-Fi password and signal strength</p></div></div>
+              <div class="logic-row"><span class="material-symbols-outlined">router</span><div class="rt"><h5>Unsupported frequency</h5><p>Device only supports 2.4GHz during setup</p></div></div>
+              <div class="logic-row"><span class="material-symbols-outlined">timer_off</span><div class="rt"><h5>Setup timeout</h5><p>Press and hold reset button for 5 seconds</p></div></div>
+            </div>
+            <div class="logic-inline" style="margin-top:14px">
+              <button class="btn-o">Troubleshooting</button>
+              <button class="btn-f">Retry Setup</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Connect Camera - Failed</div>
+      <div class="sublbl">Connection timeout/error path</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- H5: Delete Confirmation -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Camera Settings</div><div class="tr"></div></div>
+        <div class="pc">
+          <div style="padding:0 20px">
+            <div class="cs-item"><span class="material-symbols-outlined">badge</span><div class="cs-text"><h4>Camera Name</h4><p>Backyard Camera</p></div></div>
+            <div class="cs-item"><span class="material-symbols-outlined">location_on</span><div class="cs-text"><h4>Location</h4><p>Garden Area</p></div></div>
+            <div class="cs-item"><span class="material-symbols-outlined">wifi</span><div class="cs-text"><h4>Wi-Fi</h4><p>Home_WiFi_5G</p></div></div>
+          </div>
+        </div>
+        <div class="logic-scrim"></div>
+        <div class="logic-dialog">
+          <h4>Remove Camera?</h4>
+          <p>This will stop live streaming and alerts for <b>Backyard Camera</b>. Existing cloud recordings will remain.</p>
+          <div class="logic-inline">
+            <button class="btn-o">Cancel</button>
+            <button class="btn-f" style="background:var(--err-c);color:#fff">Remove</button>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Delete Confirmation</div>
+      <div class="sublbl">For remove camera / delete account actions</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- H6: Search Empty -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Search</div><div class="tr"></div></div>
+        <div class="pc">
+          <div class="search-bar">
+            <span class="material-symbols-outlined">search</span>
+            <input value="Warehouse 2" readonly>
+            <span class="material-symbols-outlined" style="font-size:18px">close</span>
+          </div>
+          <div class="logic-center" style="min-height:470px">
+            <div class="logic-icon" style="background:var(--sc)"><span class="material-symbols-outlined" style="color:var(--on-sfv)">search_off</span></div>
+            <div class="logic-title" style="font-size:18px">No results found</div>
+            <div class="logic-text">Try another keyword, remove filters, or check camera names.</div>
+            <div class="logic-chip-row" style="margin-top:14px">
+              <div class="chip">Front Door</div>
+              <div class="chip">Garage</div>
+              <div class="chip">Person Alert</div>
+            </div>
+            <div style="margin-top:14px;width:100%;max-width:260px"><button class="btn-o">Clear Search History</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Search Empty State</div>
+      <div class="sublbl">No match / clear history path</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- H7: Permissions -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Enable Permissions</div><div class="tr"></div></div>
+        <div class="logic-page">
+          <div class="logic-content">
+            <div style="font:500 18px/24px 'Roboto',sans-serif;margin:10px 0 6px">Required for full experience</div>
+            <p style="font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv)">Grant permissions to receive alerts, save snapshots, and use two-way audio.</p>
+            <div class="logic-card">
+              <div class="logic-perm"><span class="material-symbols-outlined">notifications_active</span><div class="txt"><h5>Notifications</h5><p>Instant motion and person alerts</p></div><span class="logic-badge on">Enabled</span></div>
+              <div class="logic-perm"><span class="material-symbols-outlined">mic</span><div class="txt"><h5>Microphone</h5><p>Two-way audio talk</p></div><span class="logic-badge off">Needed</span></div>
+              <div class="logic-perm"><span class="material-symbols-outlined">photo_library</span><div class="txt"><h5>Photos &amp; Videos</h5><p>Save clips and snapshots</p></div><span class="logic-badge off">Needed</span></div>
+              <div class="logic-perm"><span class="material-symbols-outlined">location_on</span><div class="txt"><h5>Location</h5><p>Optional · geo-fencing automations</p></div><span class="logic-badge">Optional</span></div>
+            </div>
+            <div class="logic-inline" style="margin-top:14px">
+              <button class="btn-o">Later</button>
+              <button class="btn-f">Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Permission Guide</div>
+      <div class="sublbl">First run / feature gating</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- H8: 2FA Setup -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Set Up 2FA</div><div class="tr"></div></div>
+        <div class="pc">
+          <div style="padding:0 20px">
+            <div style="font:500 18px/24px 'Roboto',sans-serif;margin:10px 0 6px">Two-Factor Authentication</div>
+            <p style="font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv)">Add an extra layer of security to protect your account.</p>
+            <div class="logic-chip-row" style="margin-top:10px">
+              <div class="chip sel"><span class="material-symbols-outlined">qr_code</span>Authenticator App</div>
+              <div class="chip"><span class="material-symbols-outlined">sms</span>SMS</div>
+              <div class="chip"><span class="material-symbols-outlined">mail</span>Email</div>
+            </div>
+            <div class="logic-qr"><span class="material-symbols-outlined">qr_code_2</span></div>
+            <p style="font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);text-align:center">Scan this QR code with Google Authenticator or similar app.</p>
+            <div class="tf" style="margin-top:12px"><input value="483920"><label>6-digit verification code</label></div>
+            <button class="btn-f">Verify &amp; Enable 2FA</button>
+            <div class="logic-card">
+              <div class="logic-row"><span class="material-symbols-outlined">key</span><div class="rt"><h5>Backup codes</h5><p>Generate one-time recovery codes for account access</p></div></div>
+              <button class="btn-o">Generate Backup Codes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">2FA Setup Flow</div>
+      <div class="sublbl">From Security settings</div>
+    </div>
+
+    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+
+    <!-- H9: Upgrade Plan -->
+    <div class="pw">
+      <div class="pf">
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Upgrade Plan</div><div class="tr"></div></div>
+        <div class="pc">
+          <div style="padding:0 20px">
+            <div class="logic-card" style="margin-top:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font:500 14px/20px 'Roboto',sans-serif">Current Plan</div>
+                  <div style="font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv)">Pro · 100 GB Cloud</div>
+                </div>
+                <div style="font:500 13px/18px 'Roboto',sans-serif;color:var(--orange)">80% used</div>
+              </div>
+            </div>
+            <div class="logic-card">
+              <div style="display:flex;justify-content:space-between;align-items:center"><div style="font:500 16px/22px 'Roboto',sans-serif">Plus 500 GB</div><div style="font:500 14px/20px 'Roboto',sans-serif;color:var(--pri)">$9.99/mo</div></div>
+              <div style="font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);margin-top:8px">Up to 32 cameras · 180-day retention · AI event filters</div>
+            </div>
+            <div class="logic-card">
+              <div style="display:flex;justify-content:space-between;align-items:center"><div style="font:500 16px/22px 'Roboto',sans-serif">Business 1 TB</div><div style="font:500 14px/20px 'Roboto',sans-serif;color:var(--pri)">$19.99/mo</div></div>
+              <div style="font:400 12px/16px 'Roboto',sans-serif;color:var(--on-sfv);margin-top:8px">Unlimited users · Shared roles · Priority support</div>
+            </div>
+            <div style="margin-top:14px"><button class="btn-f"><span class="material-symbols-outlined" style="font-size:18px">payment</span>Continue to Payment</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="lbl">Cloud Plan Upgrade</div>
+      <div class="sublbl">From storage warning / upgrade CTA</div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end .showcase -->
+</body>
+</html>
