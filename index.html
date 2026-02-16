@@ -57,6 +57,9 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .sb{display:flex;justify-content:space-between;align-items:center;padding:12px 24px 4px;font:500 12px/16px 'Roboto',sans-serif;color:var(--on-sf);position:relative;z-index:50;flex-shrink:0}
 .sb-r{display:flex;align-items:center;gap:5px}
 .sb-r .material-symbols-outlined{font-size:15px}
+/* Prevent content from being covered when status bar is absolutely positioned */
+.pf>.sb[style*="position:absolute"]{top:0;left:0;right:0}
+.pf>.sb[style*="position:absolute"]+*{padding-top:32px}
 
 /* Page scroll area */
 .pc{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
