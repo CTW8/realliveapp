@@ -1,6 +1,6 @@
-# RealLive UI Prototype
+# RealLive Android UI Prototype
 
-RealLive 是一个远程监控 App 的静态高保真 UI 原型仓库，当前以单文件页面展示完整业务流程（认证、实时监看、回看、设备管理、账号安全）。
+RealLive 是一个 **Android 手机端** 远程监控 App 的静态高保真 UI 原型仓库，当前以单文件页面展示完整业务流程（认证、实时监看、回看、设备管理、账号安全）。
 
 ## Quick Start
 
@@ -36,4 +36,3 @@ http://localhost:8080
 
 - 当前为静态原型，不包含后端接口与真实数据联动。
 - 如需扩展为工程化项目，建议下一步拆分 `src/`、`assets/`、`tests/` 目录。
-
