@@ -263,7 +263,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .cam-filter-row::-webkit-scrollbar{display:none}
 
 /* -- Live View -- */
-.lv-video{width:100%;aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d0d15,#1c1728)}
+.lv-video{width:100%;aspect-ratio:16/9;min-height:248px;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d0d15,#1c1728)}
 .lv-overlay-top{position:absolute;top:0;left:0;right:0;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;background:linear-gradient(to bottom,rgba(0,0,0,.6),transparent);z-index:5}
 .lv-overlay-top .cn{font:500 14px/20px 'Roboto',sans-serif;color:#fff}
 .lv-overlay-top .ct{font:400 12px/16px 'Roboto',sans-serif;color:rgba(255,255,255,.7)}
@@ -346,11 +346,16 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .share-link-row .material-symbols-outlined{color:var(--pri);cursor:pointer;font-size:20px}
 
 /* -- History / Playback -- */
-.hist-video{width:100%;aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0a12,#15101f)}
-.hist-top{position:absolute;top:0;left:0;right:0;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(0,0,0,.7),transparent);z-index:5}
+.hist-video{width:100%;aspect-ratio:16/9;min-height:264px;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0a12,#15101f)}
+.hist-top{position:absolute;top:0;left:0;right:0;padding:10px 12px;display:flex;align-items:center;gap:10px;background:linear-gradient(to bottom,rgba(0,0,0,.7),transparent);z-index:5}
 .hist-top .hb{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .hist-top .hb .material-symbols-outlined{color:#fff;font-size:20px}
-.hist-top .title{font:500 14px/20px 'Roboto',sans-serif;color:#fff}
+.hist-top .title{flex:1;min-width:0;text-align:center;font:500 14px/20px 'Roboto',sans-serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-top .hist-right{display:flex;align-items:center;flex-shrink:0}
+.hist-speed-wrap{position:relative;display:flex;align-items:center}
+.hist-speed{height:30px;padding:0 28px 0 10px;border:1px solid rgba(255,255,255,.28);border-radius:var(--r6);background:rgba(0,0,0,.35);color:#fff;font:500 11px/16px 'Roboto',sans-serif;appearance:none;-webkit-appearance:none;outline:none;cursor:pointer}
+.hist-speed-wrap .material-symbols-outlined{position:absolute;right:8px;font-size:16px;color:rgba(255,255,255,.85);pointer-events:none}
+.hist-speed option{color:#111}
 .pb-overlay{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(to top,rgba(0,0,0,.8),transparent);z-index:5}
 .pb-time{display:flex;justify-content:space-between;font:500 10px/14px 'Roboto',sans-serif;color:rgba(255,255,255,.7);margin-bottom:4px}
 .pb-bar{width:100%;height:4px;background:rgba(255,255,255,.2);border-radius:2px;position:relative;margin-bottom:6px}
@@ -359,9 +364,6 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .pb-ctrl{display:flex;justify-content:center;align-items:center;gap:20px}
 .pb-ctrl .material-symbols-outlined{color:#fff;cursor:pointer;font-size:20px}
 .pb-play{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px)}
-.pb-speed{display:flex;gap:4px;justify-content:center;margin-top:4px}
-.pb-speed .sp{padding:2px 7px;border-radius:var(--r1);font:500 10px/14px 'Roboto',sans-serif;color:rgba(255,255,255,.4);cursor:pointer}
-.pb-speed .sp.a{background:rgba(255,255,255,.12);color:#fff}
 
 .hist-content{flex:1;background:var(--bg);border-radius:var(--r5) var(--r5) 0 0;margin-top:-14px;position:relative;z-index:2;overflow:hidden;display:flex;flex-direction:column}
 .hist-content .handle{width:40px;height:4px;border-radius:2px;background:var(--olv);margin:10px auto;flex-shrink:0}
@@ -413,7 +415,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .cal-month-nav .mn .material-symbols-outlined{font-size:20px;color:var(--on-sfv)}
 
 /* -- Event Detail -- */
-.ed-video{width:100%;aspect-ratio:16/9;position:relative;background:linear-gradient(135deg,#0d0d15,#1a1525);display:flex;align-items:center;justify-content:center}
+.ed-video{width:100%;aspect-ratio:16/9;min-height:248px;position:relative;background:linear-gradient(135deg,#0d0d15,#1a1525);display:flex;align-items:center;justify-content:center}
 .ed-top{position:absolute;top:0;left:0;right:0;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(0,0,0,.7),transparent);z-index:5}
 .ed-info{padding:20px}
 .ed-info h3{font:500 18px/24px 'Roboto',sans-serif;margin-bottom:4px}
@@ -979,7 +981,22 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
         <div style="display:flex;flex-direction:column;height:100%;background:#000">
           <div class="hist-video">
             <div class="sv" style="background:linear-gradient(135deg,#0c0b14,#171220)"><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:72px">door_front</span></div></div>
-            <div class="hist-top"><div class="hb"><span class="material-symbols-outlined">arrow_back</span></div><div class="title">Front Door</div><div class="hb"><span class="material-symbols-outlined">more_vert</span></div></div>
+            <div class="hist-top">
+              <div class="hb"><span class="material-symbols-outlined">arrow_back</span></div>
+              <div class="title">Front Door</div>
+              <div class="hist-right">
+                <div class="hist-speed-wrap">
+                  <select class="hist-speed" aria-label="Playback speed">
+                    <option>0.5x</option>
+                    <option selected>1x</option>
+                    <option>2x</option>
+                    <option>4x</option>
+                    <option>8x</option>
+                  </select>
+                  <span class="material-symbols-outlined">expand_more</span>
+                </div>
+              </div>
+            </div>
             <div class="pb-overlay">
               <div class="pb-time"><span>08:23:15</span><span>23:59:59</span></div>
               <div class="pb-bar"><div class="fill" style="width:35%"></div><div class="thumb" style="left:35%"></div></div>
@@ -990,7 +1007,6 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
                 <span class="material-symbols-outlined" style="font-size:20px">fast_forward</span>
                 <span class="material-symbols-outlined" style="font-size:20px">skip_next</span>
               </div>
-              <div class="pb-speed"><div class="sp">0.5x</div><div class="sp a">1x</div><div class="sp">2x</div><div class="sp">4x</div><div class="sp">8x</div></div>
             </div>
           </div>
           <div class="hist-content">
