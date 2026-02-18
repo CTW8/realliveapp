@@ -1,0 +1,79 @@
+project:
+  name: RealLive
+  repo_root: /Users/lizhen/Documents/vsproj/realliveapp
+  type: ui-prototype-to-product
+
+sources_of_truth:
+  - /Users/lizhen/Documents/vsproj/realliveapp/PRD.md
+  - /Users/lizhen/Documents/vsproj/realliveapp/WEB_TECH_BREAKDOWN.md
+  - /Users/lizhen/Documents/vsproj/realliveapp/MOBILE_TECH_BREAKDOWN.md
+  - /Users/lizhen/Documents/vsproj/realliveapp/JIRA_BREAKDOWN.md
+  - /Users/lizhen/Documents/vsproj/realliveapp/docs/FEATURE_TRACEABILITY.md
+
+prototypes:
+  mobile:
+    index: /Users/lizhen/Documents/vsproj/realliveapp/prototypes/mobile-app/index.html
+    design: /Users/lizhen/Documents/vsproj/realliveapp/prototypes/mobile-app/UI_DESIGN.md
+  web:
+    index: /Users/lizhen/Documents/vsproj/realliveapp/prototypes/server-web/index.html
+    design: /Users/lizhen/Documents/vsproj/realliveapp/prototypes/server-web/UI_DESIGN.md
+
+entrypoints:
+  human_and_ai_index: /Users/lizhen/Documents/vsproj/realliveapp/docs/PROJECT_INDEX.md
+  ai_guide: /Users/lizhen/Documents/vsproj/realliveapp/docs/AI_DEVELOPMENT_GUIDE.md
+
+core_rules:
+  status_semantics:
+    online: green
+    recording: orange
+    offline: red
+  dangerous_actions_require_confirm: true
+  rule_constraints:
+    name_length: "4-48"
+    condition_min_len: 12
+    actions_min_len: 8
+    high_priority:
+      quiet_hours: disabled_only
+      enabled: true
+      escalation_disallow: "After 180 seconds"
+
+web_targets:
+  suggested_stack:
+    - React
+    - TypeScript
+    - Vite
+    - React Router
+    - TanStack Query
+    - Zustand
+  modules:
+    - app-shell
+    - dashboard-map
+    - live-monitor
+    - alert-center
+    - rule-engine
+    - playback
+    - device-management
+    - storage
+    - settings
+
+mobile_targets:
+  suggested_stack:
+    - Kotlin
+    - Jetpack Compose
+    - MVVM
+    - Hilt
+    - Retrofit
+  modules:
+    - auth
+    - dashboard
+    - live
+    - playback
+    - alerts
+    - device-onboarding
+    - settings
+
+commands:
+  preview:
+    - "python3 -m http.server 8080"
+    - "open http://localhost:8080/prototypes/mobile-app/index.html"
+    - "open http://localhost:8080/prototypes/server-web/index.html"

@@ -1,5 +1,40 @@
 # Repository Guidelines
 
+## AI Quick Project Brief (Read First)
+RealLive is a remote monitoring product workspace with two high-fidelity static prototypes:
+- Android-style mobile app prototype
+- Web console prototype
+
+Current repository state:
+- The code in `prototypes/*/index.html` is design prototype code, not production architecture.
+- Product and engineering specs are already prepared for implementation.
+
+Primary source-of-truth order for AI development:
+1. `PRD.md`
+2. `docs/INDEX_HTML_DESIGN_BREAKDOWN.md` (index.html-driven breakdown)
+3. `WEB_TECH_BREAKDOWN.md` and `MOBILE_TECH_BREAKDOWN.md`
+4. Prototype files for exact UI/interaction details:
+   - `prototypes/mobile-app/index.html`
+   - `prototypes/server-web/index.html`
+
+Non-negotiable business rules (must keep consistent):
+- Status semantics: online=green, recording=orange, offline=red.
+- Mobile live capability is single-stream only (no multi-grid simultaneous playback on mobile).
+- Dangerous actions require confirmation (delete, batch destructive actions, session revoke).
+- Rule constraints:
+  - Name length 4-48
+  - Name unique (case-insensitive in tenant scope)
+  - Condition min length 12
+  - Actions min length 8
+  - High-priority rules cannot be quiet-hours enabled, cannot be disabled, and cannot use `After 180 seconds` escalation.
+
+Recommended AI execution flow:
+1. Read `docs/PROJECT_INDEX.md`.
+2. Map task -> requirement -> prototype section.
+3. Implement smallest complete increment with clear file boundaries.
+4. Validate interaction behavior and edge states (loading/empty/error).
+5. Report changed files + verification steps + remaining risks.
+
 ## Project Structure & Module Organization
 This repository contains two static prototypes: Android app UI and server web UI.
 
@@ -7,8 +42,10 @@ This repository contains two static prototypes: Android app UI and server web UI
 - `prototypes/mobile-app/UI_DESIGN.md`: Mobile implementation-focused design notes.
 - `prototypes/mobile-app/UI_DESIGN_REVIEW.md`: Mobile review-oriented rationale.
 - `prototypes/mobile-app/UI_ONE_PAGER.md`: Mobile one-page summary.
-- `prototypes/server-web/web-console.html`: Server web console prototype.
-- `prototypes/server-web/WEB_UI_DESIGN.md`: Web console flow and interaction notes.
+- `prototypes/server-web/index.html`: Server web console prototype.
+- `prototypes/server-web/UI_DESIGN.md`: Web console flow and interaction notes.
+- `docs/PROJECT_INDEX.md`: Unified project index for AI/human onboarding.
+- `AI_CONTEXT.yaml`: Machine-readable project context for AI development.
 
 Keep each prototype self-contained. If the project is productized later, split to `src/`, `assets/`, and `tests/`.
 
@@ -19,11 +56,11 @@ No build system is configured. Preview via static hosting:
   - Serve this repository locally.
 - `open http://localhost:8080/prototypes/mobile-app/index.html`
   - Open mobile prototype.
-- `open http://localhost:8080/prototypes/server-web/web-console.html`
+- `open http://localhost:8080/prototypes/server-web/index.html`
   - Open web console prototype.
 - `git diff -- prototypes/mobile-app/index.html`
   - Review mobile UI changes.
-- `git diff -- prototypes/server-web/web-console.html`
+- `git diff -- prototypes/server-web/index.html`
   - Review web UI changes.
 
 ## Coding Style & Naming Conventions

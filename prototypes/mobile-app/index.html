@@ -44,6 +44,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .pw{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:10px}
 .pw .lbl{font:500 12px/1 'Roboto',sans-serif;color:var(--on-sfv);letter-spacing:.5px;text-align:center;max-width:200px}
 .pw .sublbl{font:400 11px/1.3 'Roboto',sans-serif;color:var(--ol);text-align:center;max-width:200px;margin-top:-4px}
+.pw.focus-target .pf{box-shadow:0 0 0 3px rgba(200,191,255,.7),0 0 0 8px rgba(200,191,255,.18),0 16px 48px rgba(0,0,0,.5)}
 
 /* Arrow connector */
 .flow-arrow{display:flex;align-items:center;justify-content:center;align-self:center;color:var(--ol);flex-shrink:0;padding:0 4px}
@@ -189,6 +190,10 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .sh h3{font:500 15px/22px 'Roboto',sans-serif}
 .sh a{font:500 13px/20px 'Roboto',sans-serif;color:var(--pri);text-decoration:none}
 
+.dash-camera-list{padding:0 20px;overflow-y:auto;scrollbar-width:none}
+.dash-camera-list::-webkit-scrollbar{display:none}
+.dash-camera-list .cli.sel{background:rgba(200,191,255,.08);border:1px solid rgba(200,191,255,.35);padding:10px;border-radius:var(--r2);margin-bottom:6px}
+
 /* Camera Preview Card */
 .cpsc{display:flex;gap:10px;padding:0 20px 10px;overflow-x:auto;scrollbar-width:none}
 .cpsc::-webkit-scrollbar{display:none}
@@ -216,6 +221,10 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .cs .dot.on{background:var(--green)}
 .cs .dot.off{background:var(--red)}
 .cs .dot.rec{background:var(--orange)}
+.cam-manage{display:flex;align-items:center;gap:8px}
+.cam-manage .ib{width:30px;height:30px;border-radius:50%;background:var(--sc2);display:flex;align-items:center;justify-content:center}
+.cam-manage .ib .material-symbols-outlined{font-size:17px;color:var(--on-sfv)}
+.cam-manage .ib.del .material-symbols-outlined{color:var(--red)}
 
 /* -- Search -- */
 .search-bar{margin:0 20px 16px;height:52px;border-radius:var(--r5);background:var(--sc2);display:flex;align-items:center;padding:0 16px;gap:12px}
@@ -249,8 +258,6 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .nti.ur{position:relative}
 .nti.ur::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--pri)}
 
-/* -- Multi Grid -- */
-.mg{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;flex:1}
 .mg-cell{position:relative;background:linear-gradient(135deg,#0f0e18,#1a1525);overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:0}
 .mg-cell .mg-label{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);display:flex;justify-content:space-between;align-items:center;gap:6px}
 .mg-cell .mg-label span{font:500 11px/16px 'Roboto',sans-serif;color:#fff}
@@ -558,6 +565,15 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .snackbar{position:absolute;bottom:90px;left:16px;right:16px;background:var(--inv-sf);color:var(--inv-on-sf);padding:12px 16px;border-radius:var(--r2);font:400 14px/20px 'Roboto',sans-serif;display:flex;align-items:flex-start;gap:12px;z-index:20;box-shadow:var(--e3)}
 .snackbar>span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}
 .snackbar .sb-action{font:500 14px/20px 'Roboto',sans-serif;color:var(--inv-pri);cursor:pointer;flex-shrink:0}
+
+/* Global Confirm Overlay */
+.gcf-scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9990;display:none}
+.gcf-scrim.show{display:block}
+.gcf-dialog{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(86vw,360px);background:var(--sc);border-radius:var(--r3);padding:20px;box-shadow:var(--e4);z-index:9991;display:none}
+.gcf-dialog.show{display:block}
+.gcf-dialog h4{font:500 18px/24px 'Roboto',sans-serif;margin-bottom:8px}
+.gcf-dialog p{font:400 13px/18px 'Roboto',sans-serif;color:var(--on-sfv);margin-bottom:16px}
+.gcf-actions{display:flex;gap:10px}
 </style>
 </head>
 <body>
@@ -673,26 +689,21 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
             <div class="stc"><div class="si r"><span class="material-symbols-outlined">videocam_off</span></div><div class="sn">2</div><div class="sl">Offline</div></div>
             <div class="stc"><div class="si o"><span class="material-symbols-outlined f">motion_sensor_active</span></div><div class="sn">3</div><div class="sl">Alerts</div></div>
           </div>
-          <div class="sh"><h3>Live Preview</h3><a href="#">See All</a></div>
-          <div class="cpsc">
-            <div class="cpc"><div class="cpt"><div class="sv" style="background:linear-gradient(135deg,#1a1825,#221d30)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">door_front</span></div></div><div class="lb"><div class="dot blink"></div>LIVE</div><div class="ts">09:41:23</div><div class="sg"></div></div><div class="cpi"><h4>Front Door</h4><div class="loc"><span class="material-symbols-outlined">location_on</span>Main Entrance</div></div></div>
-            <div class="cpc"><div class="cpt"><div class="sv" style="background:linear-gradient(135deg,#151520,#1d1828)"><div class="sl" style="animation-delay:-1s"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">garage</span></div></div><div class="lb"><div class="dot blink"></div>LIVE</div><div class="ts">09:41:23</div><div class="sg"></div></div><div class="cpi"><h4>Garage</h4><div class="loc"><span class="material-symbols-outlined">location_on</span>Side Building</div></div></div>
-            <div class="cpc"><div class="cpt"><div class="sv" style="background:linear-gradient(135deg,#12121a,#1a1522)"><div class="go"></div><div class="ri"><span class="material-symbols-outlined">deck</span></div></div><div class="ob">OFFLINE</div><div class="sg"></div></div><div class="cpi"><h4>Backyard</h4><div class="loc"><span class="material-symbols-outlined">location_on</span>Garden Area</div></div></div>
+          <div class="sh"><h3>All Cameras</h3><a href="#">Manage</a></div>
+          <div class="dash-camera-list">
+            <div class="cli sel"><div class="ct"><span class="material-symbols-outlined">door_front</span></div><div class="ci"><h4>Front Door</h4><p>Main Entrance · 2 events today · Last: Person 2m ago</p></div><div class="cs"><div class="dot rec blink"></div><span style="color:var(--orange)">REC</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">garage</span></div><div class="ci"><h4>Garage</h4><p>Side Building · 1 event today · Last: Motion 15m ago</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">living</span></div><div class="ci"><h4>Living Room</h4><p>Indoor · 0 events today</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">deck</span></div><div class="ci"><h4>Backyard</h4><p>Garden · 1 issue today · Offline since 8:30 AM</p></div><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">warehouse</span></div><div class="ci"><h4>Warehouse</h4><p>Storage · 2 events today</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">bedroom_parent</span></div><div class="ci"><h4>Bedroom</h4><p>Indoor · 0 events today</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">meeting_room</span></div><div class="ci"><h4>Office</h4><p>Indoor · 1 event today</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">local_parking</span></div><div class="ci"><h4>Parking Lot</h4><p>Outdoor · 0 events today</p></div><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div></div>
           </div>
-          <div class="sh"><h3>All Cameras</h3><a href="#">Filter</a></div>
-          <div style="padding:0 20px">
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">door_front</span></div><div class="ci"><h4>Front Door</h4><p>Main Entrance · 1080p</p></div><div class="cs"><div class="dot rec blink"></div><span style="color:var(--orange)">REC</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">garage</span></div><div class="ci"><h4>Garage</h4><p>Side Building · 1080p</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">living</span></div><div class="ci"><h4>Living Room</h4><p>Indoor · 2K</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">deck</span></div><div class="ci"><h4>Backyard</h4><p>Garden · 1080p</p></div><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">warehouse</span></div><div class="ci"><h4>Warehouse</h4><p>Storage · 4K</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
-          </div>
-          <div style="height:12px"></div>
         </div>
         <div class="fab"><span class="material-symbols-outlined">add</span></div>
         <div class="nb">
           <div class="ni a"><div class="ind"><span class="material-symbols-outlined">dashboard</span></div><span class="nl">Dashboard</span></div>
-          <div class="ni"><div class="ind"><span class="material-symbols-outlined">videocam</span></div><span class="nl">Cameras</span></div>
           <div class="ni"><div class="ind"><span class="material-symbols-outlined">notifications</span></div><span class="nl">Alerts</span></div>
           <div class="ni"><div class="ind"><span class="material-symbols-outlined">settings</span></div><span class="nl">Settings</span></div>
         </div>
@@ -734,11 +745,11 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 
     <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
 
-    <!-- B3: Notifications -->
+    <!-- B3: Alerts -->
     <div class="pw">
       <div class="pf">
         <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
-        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Notifications</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">done_all</span></div><div class="ib"><span class="material-symbols-outlined">filter_list</span></div></div></div>
+        <div class="tab"><div class="ld"></div><div class="tt">Alerts</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">done_all</span></div><div class="ib"><span class="material-symbols-outlined">filter_list</span></div></div></div>
         <div class="pc">
           <div style="padding:0 20px">
             <div class="nti ur"><div class="ni-ic alr"><span class="material-symbols-outlined">person_alert</span></div><div class="nc"><h4>Person Detected - Front Door</h4><p>An unknown person was detected at the front entrance.</p><div class="nt">2 min ago</div></div><div class="nth"><span class="material-symbols-outlined">image</span></div></div>
@@ -746,12 +757,17 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
             <div class="nti"><div class="ni-ic alr"><span class="material-symbols-outlined">videocam_off</span></div><div class="nc"><h4>Camera Offline - Backyard</h4><p>Camera offline since 8:30 AM. Check connection.</p><div class="nt">1 hour ago</div></div></div>
             <div class="nti"><div class="ni-ic mot"><span class="material-symbols-outlined">directions_run</span></div><div class="nc"><h4>Motion Detected - Garage</h4><p>Brief motion near the garage door.</p><div class="nt">3 hours ago</div></div><div class="nth"><span class="material-symbols-outlined">image</span></div></div>
             <div class="nti"><div class="ni-ic inf"><span class="material-symbols-outlined">update</span></div><div class="nc"><h4>Firmware Update Available</h4><p>Front Door camera v2.4.1 ready.</p><div class="nt">5 hours ago</div></div></div>
-            <div class="nti"><div class="ni-ic inf"><span class="material-symbols-outlined">cloud_done</span></div><div class="nc"><h4>Cloud Storage - 80% Used</h4><p>Consider upgrading or deleting old recordings.</p><div class="nt">Yesterday</div></div></div>
+            <div class="nti"><div class="ni-ic inf"><span class="material-symbols-outlined">cloud_done</span></div><div class="nc"><h4>Cloud Storage - 80% Used</h4><p>Consider upgrading or cleaning old history clips.</p><div class="nt">Yesterday</div></div></div>
           </div>
         </div>
+        <div class="nb">
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">dashboard</span></div><span class="nl">Dashboard</span></div>
+          <div class="ni a"><div class="ind"><span class="material-symbols-outlined">notifications</span></div><span class="nl">Alerts</span></div>
+          <div class="ni"><div class="ind"><span class="material-symbols-outlined">settings</span></div><span class="nl">Settings</span></div>
+        </div>
       </div>
-      <div class="lbl">Notifications</div>
-      <div class="sublbl">Tap bell icon on Dashboard</div>
+      <div class="lbl">Alerts</div>
+      <div class="sublbl">Tap Alerts tab in bottom navigation</div>
     </div>
 
   </div>
@@ -761,50 +777,11 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
   <div class="flow-header"><h2>C. Camera Views</h2></div>
   <div class="flow-row">
 
-    <!-- C1: Multi Grid 2x2 -->
+    <!-- C1: Camera Management -->
     <div class="pw">
       <div class="pf">
         <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
-        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Multi View</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">grid_view</span></div><div class="ib"><span class="material-symbols-outlined">fullscreen</span></div></div></div>
-        <div class="mg">
-          <div class="mg-cell">
-            <div class="sv" style="background:linear-gradient(135deg,#1a1825,#221d30)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">door_front</span></div></div><div class="sg"></div>
-            <div class="mg-top"><div class="lb"><div class="dot blink"></div>LIVE</div></div>
-            <div class="mg-label"><span>Front Door</span><div class="mg-status"><div class="dot blink" style="background:var(--orange)"></div><span style="font-size:9px">REC</span></div></div>
-          </div>
-          <div class="mg-cell">
-            <div class="sv" style="background:linear-gradient(135deg,#151520,#1d1828)"><div class="sl" style="animation-delay:-1.5s"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">garage</span></div></div><div class="sg"></div>
-            <div class="mg-top"><div class="lb"><div class="dot blink"></div>LIVE</div></div>
-            <div class="mg-label"><span>Garage</span><div class="mg-status"><div class="dot"></div></div></div>
-          </div>
-          <div class="mg-cell">
-            <div class="sv" style="background:linear-gradient(135deg,#151520,#1e1828)"><div class="sl" style="animation-delay:-.8s"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined">living</span></div></div><div class="sg"></div>
-            <div class="mg-top"><div class="lb"><div class="dot blink"></div>LIVE</div></div>
-            <div class="mg-label"><span>Living Room</span><div class="mg-status"><div class="dot"></div></div></div>
-          </div>
-          <div class="mg-cell">
-            <div class="sv" style="background:linear-gradient(135deg,#0e0e14,#161220)"><div class="go"></div><div class="ri"><span class="material-symbols-outlined">deck</span></div></div><div class="sg"></div>
-            <div class="mg-label"><span>Backyard</span><div class="mg-status"><div class="dot" style="background:var(--red)"></div><span style="font-size:9px;color:var(--red)">OFF</span></div></div>
-          </div>
-        </div>
-        <div class="nb">
-          <div class="ni"><div class="ind"><span class="material-symbols-outlined">dashboard</span></div><span class="nl">Dashboard</span></div>
-          <div class="ni a"><div class="ind"><span class="material-symbols-outlined">videocam</span></div><span class="nl">Cameras</span></div>
-          <div class="ni"><div class="ind"><span class="material-symbols-outlined">notifications</span></div><span class="nl">Alerts</span></div>
-          <div class="ni"><div class="ind"><span class="material-symbols-outlined">settings</span></div><span class="nl">Settings</span></div>
-        </div>
-      </div>
-      <div class="lbl">Multi View (2x2)</div>
-      <div class="sublbl">Tap "Cameras" in bottom nav</div>
-    </div>
-
-    <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
-
-    <!-- C2: Camera Full List -->
-    <div class="pw">
-      <div class="pf">
-        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
-        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">All Cameras</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">sort</span></div></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Camera Management</div><div class="tr"><div class="ib"><span class="material-symbols-outlined">sort</span></div></div></div>
         <div class="cam-filter-row">
           <div class="chip sel">All (8)</div>
           <div class="chip"><span class="material-symbols-outlined">wifi</span>Online (6)</div>
@@ -813,24 +790,24 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
         </div>
         <div class="pc">
           <div style="padding:0 20px">
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">door_front</span></div><div class="ci"><h4>Front Door</h4><p>Main Entrance · 1080p · 2.4 Mbps</p></div><div class="cs"><div class="dot rec blink"></div><span style="color:var(--orange)">REC</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">garage</span></div><div class="ci"><h4>Garage</h4><p>Side Building · 1080p · 1.8 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">living</span></div><div class="ci"><h4>Living Room</h4><p>Indoor · 2K · 3.2 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">deck</span></div><div class="ci"><h4>Backyard</h4><p>Garden · 1080p</p></div><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">warehouse</span></div><div class="ci"><h4>Warehouse</h4><p>Storage · 4K · 5.1 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">bedroom_parent</span></div><div class="ci"><h4>Bedroom</h4><p>Indoor · 1080p · 1.5 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">meeting_room</span></div><div class="ci"><h4>Office</h4><p>Indoor · 2K · 2.8 Mbps</p></div><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div></div>
-            <div class="cli"><div class="ct"><span class="material-symbols-outlined">local_parking</span></div><div class="ci"><h4>Parking Lot</h4><p>Outdoor · 1080p</p></div><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">door_front</span></div><div class="ci"><h4>Front Door</h4><p>Main Entrance · 1080p · 2.4 Mbps</p></div><div class="cam-manage"><div class="cs"><div class="dot rec blink"></div><span style="color:var(--orange)">REC</span></div><div class="ib"><span class="material-symbols-outlined">edit</span></div><div class="ib del"><span class="material-symbols-outlined">delete</span></div></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">garage</span></div><div class="ci"><h4>Garage</h4><p>Side Building · 1080p · 1.8 Mbps</p></div><div class="cam-manage"><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div><div class="ib"><span class="material-symbols-outlined">edit</span></div><div class="ib del"><span class="material-symbols-outlined">delete</span></div></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">living</span></div><div class="ci"><h4>Living Room</h4><p>Indoor · 2K · 3.2 Mbps</p></div><div class="cam-manage"><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div><div class="ib"><span class="material-symbols-outlined">edit</span></div><div class="ib del"><span class="material-symbols-outlined">delete</span></div></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">deck</span></div><div class="ci"><h4>Backyard</h4><p>Garden · 1080p</p></div><div class="cam-manage"><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div><div class="ib"><span class="material-symbols-outlined">edit</span></div><div class="ib del"><span class="material-symbols-outlined">delete</span></div></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">warehouse</span></div><div class="ci"><h4>Warehouse</h4><p>Storage · 4K · 5.1 Mbps</p></div><div class="cam-manage"><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div><div class="ib"><span class="material-symbols-outlined">edit</span></div><div class="ib del"><span class="material-symbols-outlined">delete</span></div></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">bedroom_parent</span></div><div class="ci"><h4>Bedroom</h4><p>Indoor · 1080p · 1.5 Mbps</p></div><div class="cam-manage"><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div><div class="ib"><span class="material-symbols-outlined">edit</span></div><div class="ib del"><span class="material-symbols-outlined">delete</span></div></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">meeting_room</span></div><div class="ci"><h4>Office</h4><p>Indoor · 2K · 2.8 Mbps</p></div><div class="cam-manage"><div class="cs"><div class="dot on"></div><span style="color:var(--green)">Online</span></div><div class="ib"><span class="material-symbols-outlined">edit</span></div><div class="ib del"><span class="material-symbols-outlined">delete</span></div></div></div>
+            <div class="cli"><div class="ct"><span class="material-symbols-outlined">local_parking</span></div><div class="ci"><h4>Parking Lot</h4><p>Outdoor · 1080p</p></div><div class="cam-manage"><div class="cs"><div class="dot off"></div><span style="color:var(--red)">Offline</span></div><div class="ib"><span class="material-symbols-outlined">edit</span></div><div class="ib del"><span class="material-symbols-outlined">delete</span></div></div></div>
           </div>
         </div>
       </div>
-      <div class="lbl">Camera List (Full)</div>
-      <div class="sublbl">Tap "See All" on Dashboard</div>
+      <div class="lbl">Camera Management</div>
+      <div class="sublbl">Tap "Manage" on Dashboard · Edit opens Camera Settings · Delete requires confirmation</div>
     </div>
 
     <div class="flow-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
 
-    <!-- C3: Live View -->
+    <!-- C2: Live View -->
     <div class="pw">
       <div class="pf">
         <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
@@ -858,10 +835,9 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
             <div class="act-grid">
               <div class="act-item"><span class="material-symbols-outlined">history</span><span>Playback</span></div>
               <div class="act-item"><span class="material-symbols-outlined">photo_camera</span><span>Snapshot</span></div>
-              <div class="act-item"><span class="material-symbols-outlined">fiber_manual_record</span><span>Record</span></div>
               <div class="act-item"><span class="material-symbols-outlined">share</span><span>Share</span></div>
               <div class="act-item"><span class="material-symbols-outlined">notifications_active</span><span>Alerts</span></div>
-              <div class="act-item"><span class="material-symbols-outlined">settings</span><span>Settings</span></div>
+              <div class="act-item"><span class="material-symbols-outlined">settings</span><span>Camera Config</span></div>
               <div class="act-item"><span class="material-symbols-outlined">open_with</span><span>PTZ</span></div>
               <div class="act-item"><span class="material-symbols-outlined">cloud_download</span><span>Download</span></div>
             </div>
@@ -875,7 +851,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
         </div>
       </div>
       <div class="lbl">Live View</div>
-      <div class="sublbl">Tap any camera card/item</div>
+      <div class="sublbl">Tap any camera item from Dashboard or Camera Management</div>
     </div>
 
   </div>
@@ -1148,9 +1124,9 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 
   </div>
 </div>
-<!-- ============ FLOW F: Camera Management ============ -->
+<!-- ============ FLOW F: Device Onboarding & Camera Settings ============ -->
 <div class="flow-group">
-  <div class="flow-header"><h2>F. Camera Management</h2></div>
+  <div class="flow-header"><h2>F. Device Onboarding &amp; Camera Settings</h2></div>
   <div class="flow-row">
 
     <!-- F1: Add Camera Scan -->
@@ -1267,7 +1243,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
         </div>
       </div>
       <div class="lbl">Camera Settings</div>
-      <div class="sublbl">Tap "Settings" in Live View</div>
+      <div class="sublbl">From Live "Camera Config" or Camera Management "Edit"</div>
     </div>
 
   </div>
@@ -1298,7 +1274,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
           <div class="set-group">
             <div class="set-gt">Storage</div>
             <div class="set-item"><span class="material-symbols-outlined">cloud</span><div class="set-text"><h4>Cloud Storage</h4><p>80% of 100 GB used</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
-            <div class="set-item"><span class="material-symbols-outlined">sd_storage</span><div class="set-text"><h4>Local Storage</h4><p>Manage SD card recordings</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
+            <div class="set-item"><span class="material-symbols-outlined">sd_storage</span><div class="set-text"><h4>Local Storage</h4><p>Manage SD card history clips</p></div><span class="material-symbols-outlined trailing" style="font-size:18px">chevron_right</span></div>
           </div>
           <div class="set-group">
             <div class="set-gt">General</div>
@@ -1312,7 +1288,6 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
         </div>
         <div class="nb">
           <div class="ni"><div class="ind"><span class="material-symbols-outlined">dashboard</span></div><span class="nl">Dashboard</span></div>
-          <div class="ni"><div class="ind"><span class="material-symbols-outlined">videocam</span></div><span class="nl">Cameras</span></div>
           <div class="ni"><div class="ind"><span class="material-symbols-outlined">notifications</span></div><span class="nl">Alerts</span></div>
           <div class="ni a"><div class="ind"><span class="material-symbols-outlined">settings</span></div><span class="nl">Settings</span></div>
         </div>
@@ -1388,7 +1363,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
           <div class="storage-bar-item"><div class="sbi-icon"><span class="material-symbols-outlined">bedroom_parent</span></div><div class="sbi-info"><h4>Bedroom</h4><div class="sbi-bar"><div class="sbi-fill" style="width:10%"></div></div></div><div class="sbi-size">8 GB</div></div>
           <div class="dv" style="margin:8px 20px"></div>
           <div style="padding:8px 20px;display:flex;flex-direction:column;gap:10px">
-            <button class="btn-tonal"><span class="material-symbols-outlined" style="font-size:18px">auto_delete</span>Auto-delete recordings older than 30 days</button>
+            <button class="btn-tonal"><span class="material-symbols-outlined" style="font-size:18px">auto_delete</span>Auto-delete history clips older than 30 days</button>
             <button class="btn-o"><span class="material-symbols-outlined" style="font-size:18px">upgrade</span>Upgrade to 500 GB Plan</button>
           </div>
           <div style="height:16px"></div>
@@ -1505,10 +1480,10 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
             <div class="logic-card" style="margin-top:0">
               <div class="logic-row"><span class="material-symbols-outlined">videocam</span><div class="rt"><h5>Backyard Camera</h5><p>Outdoor · Garden Area</p></div></div>
               <div class="logic-row"><span class="material-symbols-outlined">high_quality</span><div class="rt"><h5>Default stream</h5><p>1080p · 30fps</p></div></div>
-              <div class="logic-row"><span class="material-symbols-outlined">fiber_manual_record</span><div class="rt"><h5>Recording mode</h5><p>Motion-triggered</p></div></div>
+              <div class="logic-row"><span class="material-symbols-outlined">warning</span><div class="rt"><h5>Alert sensitivity</h5><p>Balanced</p></div></div>
             </div>
             <div class="logic-inline" style="margin-top:14px">
-              <button class="btn-tonal">Back to Cameras</button>
+              <button class="btn-tonal">Back to Dashboard</button>
               <button class="btn-f">Open Live View</button>
             </div>
           </div>
@@ -1565,7 +1540,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
         <div class="logic-scrim"></div>
         <div class="logic-dialog">
           <h4>Remove Camera?</h4>
-          <p>This will stop live streaming and alerts for <b>Backyard Camera</b>. Existing cloud recordings will remain.</p>
+          <p>This will stop live streaming and alerts for <b>Backyard Camera</b>. Existing cloud history clips will remain.</p>
           <div class="logic-inline">
             <button class="btn-o">Cancel</button>
             <button class="btn-f" style="background:var(--err-c);color:#fff">Remove</button>
@@ -1703,5 +1678,265 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 </div>
 
 </div><!-- end .showcase -->
+<script>
+(()=>{
+  const normalize = (s)=> (s || '').replace(/\s+/g, ' ').trim();
+  const screens = Array.from(document.querySelectorAll('.pw'));
+  const labelMap = new Map();
+  let deleteContext = 'camera';
+
+  screens.forEach((screen)=>{
+    const label = normalize(screen.querySelector('.lbl')?.textContent);
+    if (label) labelMap.set(label, screen);
+  });
+
+  const goTo = (label)=>{
+    const target = labelMap.get(label);
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    target.classList.add('focus-target');
+    window.setTimeout(()=> target.classList.remove('focus-target'), 700);
+  };
+
+  const bind = (screenLabel, selector, handler)=>{
+    const screen = labelMap.get(screenLabel);
+    if (!screen) return;
+    Array.from(screen.querySelectorAll(selector)).forEach((el)=>{
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', (e)=> handler(e, el, screen));
+    });
+  };
+
+  const jump = (screenLabel, selector, targetLabel)=>{
+    bind(screenLabel, selector, (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      goTo(targetLabel);
+    });
+  };
+  const scrim = document.createElement('div');
+  scrim.className = 'gcf-scrim';
+  const dialog = document.createElement('div');
+  dialog.className = 'gcf-dialog';
+  dialog.innerHTML = '<h4></h4><p></p><div class="gcf-actions"><button class="btn-o">Cancel</button><button class="btn-f" style="background:var(--err-c);color:#fff">Remove</button></div>';
+  document.body.appendChild(scrim);
+  document.body.appendChild(dialog);
+
+  const closeConfirm = ()=>{
+    scrim.classList.remove('show');
+    dialog.classList.remove('show');
+  };
+  const openDeleteConfirm = (context)=>{
+    deleteContext = context;
+    const title = dialog.querySelector('h4');
+    const desc = dialog.querySelector('p');
+    const ok = dialog.querySelector('.btn-f');
+    if (context === 'account') {
+      title.textContent = 'Delete Account?';
+      desc.textContent = 'This will permanently delete your account and revoke all active sessions.';
+      ok.textContent = 'Delete';
+    } else {
+      title.textContent = 'Remove Camera?';
+      desc.textContent = 'This will stop live streaming and alerts for the selected camera.';
+      ok.textContent = 'Remove';
+    }
+    scrim.classList.add('show');
+    dialog.classList.add('show');
+  };
+  scrim.addEventListener('click', closeConfirm);
+  dialog.querySelector('.btn-o').addEventListener('click', (e)=>{
+    e.preventDefault();
+    closeConfirm();
+  });
+  dialog.querySelector('.btn-f').addEventListener('click', (e)=>{
+    e.preventDefault();
+    closeConfirm();
+    goTo(deleteContext === 'account' ? 'Login' : 'Dashboard');
+  });
+
+  screens.forEach((screen)=>{
+    Array.from(screen.querySelectorAll('.nb .ni')).forEach((item)=>{
+      item.style.cursor = 'pointer';
+      item.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const nav = normalize(item.querySelector('.nl')?.textContent);
+        if (nav === 'Dashboard') goTo('Dashboard');
+        if (nav === 'Alerts') goTo('Alerts');
+        if (nav === 'Settings') goTo('Settings');
+      });
+    });
+  });
+
+  jump('Splash / Welcome', '.btn-f', 'Login');
+  jump('Splash / Welcome', '.btn-o', 'Login');
+  jump('Login', '.btn-f', 'Dashboard');
+  jump('Login', '.login-ft a', 'Register');
+  jump('Login', '.forgot a', 'Forgot Password');
+  jump('Register', '.tab .ld', 'Login');
+  jump('Register', '.btn-f', 'Dashboard');
+  jump('Forgot Password', '.tab .ld', 'Login');
+  jump('Forgot Password', '.btn-f:last-of-type', 'Login');
+
+  jump('Dashboard', '.dash-hd .acts .ib:nth-child(1)', 'Alerts');
+  jump('Dashboard', '.dash-hd .acts .ib:nth-child(2)', 'Search');
+  jump('Dashboard', '.sh a', 'Camera Management');
+  jump('Dashboard', '.fab', 'Add Camera (Scan)');
+  bind('Dashboard', '.dash-camera-list .cli', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goTo('Live View');
+  });
+
+  jump('Search', '.tab .ld', 'Dashboard');
+  bind('Search', '.search-result', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goTo('Live View');
+  });
+  bind('Search', '.search-bar .material-symbols-outlined:last-child', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goTo('Search Empty State');
+  });
+  jump('Search Empty State', '.tab .ld', 'Search');
+  jump('Search Empty State', '.btn-o', 'Search');
+
+  bind('Alerts', '.nti', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goTo('Live View');
+  });
+
+  jump('Camera Management', '.tab .ld', 'Dashboard');
+  bind('Camera Management', '.cam-manage .ib', (e, el)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    if (el.classList.contains('del')) {
+      openDeleteConfirm('camera');
+    } else {
+      goTo('Camera Settings');
+    }
+  });
+  bind('Camera Management', '.cli', (e)=>{
+    if (e.target.closest('.cam-manage .ib')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    goTo('Live View');
+  });
+
+  bind('Live View', '.act-item', (e, el)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    const action = normalize(el.querySelector('span:last-child')?.textContent);
+    const routes = {
+      Playback: 'History Playback',
+      Snapshot: 'Snapshot Gallery',
+      Share: 'Share Bottom Sheet',
+      Alerts: 'Alerts',
+      'Camera Config': 'Camera Settings',
+      PTZ: 'PTZ Control',
+      Download: 'Event Detail'
+    };
+    if (routes[action]) goTo(routes[action]);
+  });
+  bind('Live View', '.lv-controls .lv-btn', (e, el, screen)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    const btns = Array.from(screen.querySelectorAll('.lv-controls .lv-btn'));
+    const idx = btns.indexOf(el);
+    const controlRoutes = [
+      'Snapshot Gallery',   // screenshot
+      'Permission Guide',   // mic permission path
+      'Settings',           // audio/global preferences
+      'Camera Settings',    // quality/profile settings
+      'PTZ Control'         // immersive control page
+    ];
+    const target = controlRoutes[idx];
+    if (target) goTo(target);
+  });
+
+  jump('PTZ Control', '.ptz-top .back:first-child', 'Live View');
+  jump('PTZ Control', '.ptz-top .back:last-child', 'Live View');
+  jump('Snapshot Gallery', '.tab .ld', 'Live View');
+  bind('Snapshot Gallery', '.gallery-item', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goTo('Share Bottom Sheet');
+  });
+  jump('Share Bottom Sheet', '.share-scrim', 'Live View');
+  jump('Share Bottom Sheet', '.btn-o', 'Live View');
+
+  jump('History Playback', '.hist-top .hb', 'Live View');
+  jump('History Playback', '.date-disp', 'Calendar Picker');
+  bind('History Playback', '.tl-item', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goTo('Event Detail');
+  });
+  jump('Calendar Picker', '.btn-f', 'History Playback');
+  jump('Calendar Picker', '.tab .ld', 'History Playback');
+  jump('Event Detail', '.ed-top .hb:first-child', 'History Playback');
+  jump('Event Detail', '.ed-actions .btn-o', 'Share Bottom Sheet');
+
+  jump('Add Camera (Scan)', '.tab .ld', 'Dashboard');
+  jump('Add Camera (Scan)', '.btn-tonal', 'Camera Setup');
+  jump('Add Camera (Scan)', '.btn-o', 'Camera Setup');
+  jump('Camera Setup', '.tab .ld', 'Add Camera (Scan)');
+  jump('Camera Setup', '.btn-f', 'Connect Camera - In Progress');
+  jump('Connect Camera - In Progress', '.tab .ld', 'Camera Setup');
+  bind('Connect Camera - In Progress', '.logic-card', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    goTo('Connect Camera - Success');
+  });
+  jump('Connect Camera - In Progress', '.btn-o', 'Connect Camera - Failed');
+  jump('Connect Camera - Success', '.btn-tonal', 'Dashboard');
+  jump('Connect Camera - Success', '.btn-f', 'Live View');
+  jump('Connect Camera - Failed', '.tab .ld', 'Connect Camera - In Progress');
+  jump('Connect Camera - Failed', '.btn-o', 'Add Camera (Scan)');
+  jump('Connect Camera - Failed', '.btn-f', 'Connect Camera - In Progress');
+
+  jump('Camera Settings', '.tab .ld', 'Camera Management');
+  bind('Camera Settings', '.btn-o', (e, el)=>{
+    if (!normalize(el.textContent).includes('Remove Camera')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openDeleteConfirm('camera');
+  });
+
+  jump('Settings', '.set-profile', 'Profile / Account');
+  bind('Settings', '.set-item', (e, el)=>{
+    const txt = normalize(el.textContent);
+    if (txt.includes('Push Notifications')) goTo('Permission Guide');
+    if (txt.includes('Cloud Storage')) goTo('Storage Management');
+    if (txt.includes('Security')) goTo('Security Settings');
+    if (txt.includes('Sign Out')) goTo('Login');
+  });
+  jump('Profile / Account', '.tab .ld', 'Settings');
+  bind('Profile / Account', '.btn-o', (e, el)=>{
+    if (!normalize(el.textContent).includes('Delete Account')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openDeleteConfirm('account');
+  });
+  jump('Storage Management', '.tab .ld', 'Settings');
+  jump('Storage Management', '.btn-o', 'Cloud Plan Upgrade');
+  jump('Security Settings', '.tab .ld', 'Settings');
+  bind('Security Settings', '.sec-item', (e, el)=>{
+    if (!normalize(el.textContent).includes('Two-Factor Auth')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    goTo('2FA Setup Flow');
+  });
+  jump('2FA Setup Flow', '.tab .ld', 'Security Settings');
+  jump('2FA Setup Flow', '.btn-f', 'Security Settings');
+  jump('Cloud Plan Upgrade', '.tab .ld', 'Storage Management');
+  jump('Cloud Plan Upgrade', '.btn-f', 'Storage Management');
+
+  jump('Permission Guide', '.tab .ld', 'Settings');
+  jump('Permission Guide', '.btn-o', 'Dashboard');
+  jump('Permission Guide', '.btn-f', 'Dashboard');
+})();
+</script>
 </body>
 </html>
