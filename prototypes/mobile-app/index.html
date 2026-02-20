@@ -814,7 +814,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
         <div style="display:flex;flex-direction:column;height:100%;background:linear-gradient(135deg,#0f0e18,#1c1728)">
           <div class="lv-video">
             <div class="sv" style="background:linear-gradient(135deg,#0f0e18,#1c1728)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:72px">door_front</span></div></div>
-            <div class="lv-overlay-top"><div><div class="cn">Front Door</div><div class="ct">Main Entrance</div></div></div>
+            <div class="hist-top"><div class="hb"><span class="material-symbols-outlined">arrow_back</span></div><div class="title">Front Door</div><div style="width:36px;flex-shrink:0"></div></div>
             <div class="live-badge"><div class="dot blink"></div>LIVE</div>
             <div class="lv-controls">
               <button class="lv-btn"><span class="material-symbols-outlined">screenshot_monitor</span></button>
@@ -868,12 +868,8 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
         <div class="ptz-page">
           <div class="ptz-video">
             <div class="sv" style="background:linear-gradient(135deg,#0f0e18,#1c1728)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:72px">door_front</span></div></div><div class="sg"></div>
-            <div class="ptz-overlay">
-              <div class="ptz-top">
-                <div class="back"><span class="material-symbols-outlined">arrow_back</span></div>
-                <div class="title">PTZ Control</div>
-                <div class="back"><span class="material-symbols-outlined">more_vert</span></div>
-              </div>
+            <div class="hist-top"><div class="hb"><span class="material-symbols-outlined">arrow_back</span></div><div class="title">PTZ Control</div><div class="hb"><span class="material-symbols-outlined">more_vert</span></div></div>
+            <div class="ptz-overlay" style="justify-content:flex-end">
               <div class="ptz-bottom">
                 <div class="ptz-pad">
                   <div class="arr up"><span class="material-symbols-outlined">keyboard_arrow_up</span></div>
@@ -960,6 +956,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
             </div>
           </div>
           <div class="share-scrim"></div>
+          <div class="hist-top" style="z-index:15"><div class="hb"><span class="material-symbols-outlined">arrow_back</span></div><div class="title">Share Camera</div><div style="width:36px;flex-shrink:0"></div></div>
           <div class="share-sheet">
             <div class="handle"></div>
             <h3>Share Camera</h3>
@@ -1469,7 +1466,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
     <div class="pw">
       <div class="pf">
         <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
-        <div class="tab"><div class="ld"></div><div class="tt">Setup Complete</div><div class="tr"></div></div>
+        <div class="tab"><div class="ld"><span class="material-symbols-outlined">arrow_back</span></div><div class="tt">Setup Complete</div><div class="tr"></div></div>
         <div class="logic-page">
           <div class="logic-content">
             <div class="logic-center">
@@ -1855,14 +1852,15 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
     if (target) goTo(target);
   });
 
-  jump('PTZ Control', '.ptz-top .back:first-child', 'Live View');
-  jump('PTZ Control', '.ptz-top .back:last-child', 'Live View');
+  jump('Live View', '.hist-top .hb', 'Dashboard');
+  jump('PTZ Control', '.hist-top .hb:first-child', 'Live View');
   jump('Snapshot Gallery', '.tab .ld', 'Live View');
   bind('Snapshot Gallery', '.gallery-item', (e)=>{
     e.preventDefault();
     e.stopPropagation();
     goTo('Share Bottom Sheet');
   });
+  jump('Share Bottom Sheet', '.hist-top .hb', 'Live View');
   jump('Share Bottom Sheet', '.share-scrim', 'Live View');
   jump('Share Bottom Sheet', '.btn-o', 'Live View');
 
@@ -1890,6 +1888,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
     goTo('Connect Camera - Success');
   });
   jump('Connect Camera - In Progress', '.btn-o', 'Connect Camera - Failed');
+  jump('Connect Camera - Success', '.tab .ld', 'Dashboard');
   jump('Connect Camera - Success', '.btn-tonal', 'Dashboard');
   jump('Connect Camera - Success', '.btn-f', 'Live View');
   jump('Connect Camera - Failed', '.tab .ld', 'Connect Camera - In Progress');
