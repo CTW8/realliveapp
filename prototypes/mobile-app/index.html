@@ -306,31 +306,55 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .ev-item .ev-text span{font:400 11px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
 
 /* -- PTZ -- */
-.ptz-page{display:flex;flex-direction:column;height:100%;background:linear-gradient(135deg,#0f0e18,#1c1728)}
-.ptz-video{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d0d15,#1c1728)}
-.ptz-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;z-index:5}
-.ptz-top{padding:10px;display:flex;justify-content:space-between;align-items:center}
-.ptz-top .back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.ptz-top .back .material-symbols-outlined{color:#fff;font-size:20px}
-.ptz-top .title{font:500 14px/20px 'Roboto',sans-serif;color:#fff}
-.ptz-bottom{padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px}
-.ptz-pad{width:160px;height:160px;border-radius:50%;border:2px solid rgba(255,255,255,.15);position:relative;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);backdrop-filter:blur(8px)}
-.ptz-pad .center-dot{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3)}
-.ptz-pad .arr{position:absolute;color:rgba(255,255,255,.6);cursor:pointer}
-.ptz-pad .arr.up{top:12px}
-.ptz-pad .arr.dn{bottom:12px}
-.ptz-pad .arr.lt{left:12px}
-.ptz-pad .arr.rt{right:12px}
-.ptz-pad .arr .material-symbols-outlined{font-size:28px}
-.ptz-zoom{display:flex;align-items:center;gap:16px}
-.ptz-zoom .zb{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.ptz-zoom .zb .material-symbols-outlined{color:#fff;font-size:20px}
-.ptz-zoom .zbar{width:120px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;position:relative}
-.ptz-zoom .zbar .zfill{width:60%;height:100%;background:var(--pri);border-radius:2px}
-.ptz-zoom .zbar .zthumb{position:absolute;left:60%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--pri);box-shadow:0 0 4px rgba(0,0,0,.5)}
-.ptz-presets{display:flex;gap:8px}
-.ptz-presets .preset{padding:6px 14px;border-radius:var(--r6);background:rgba(255,255,255,.1);font:500 11px/16px 'Roboto',sans-serif;color:rgba(255,255,255,.7);cursor:pointer}
-.ptz-presets .preset.active{background:var(--pri);color:var(--on-pri)}
+.ptz-page{display:flex;flex-direction:column;height:100%;background:var(--sc);overflow:hidden}
+.ptz-top{flex-shrink:0;height:52px;padding:0 12px;display:flex;justify-content:space-between;align-items:center;background:var(--sc1);border-bottom:1px solid rgba(255,255,255,.06)}
+.ptz-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ptz-back .material-symbols-outlined{color:#fff;font-size:20px}
+.ptz-head{display:flex;flex-direction:column;align-items:center;gap:3px}
+.ptz-cam-name{font:500 13px/18px 'Roboto',sans-serif;color:#fff}
+.ptz-live-badge{display:flex;align-items:center;gap:4px;background:rgba(220,50,50,.88);border-radius:3px;padding:2px 7px}
+.ptz-live-badge .ldot{width:5px;height:5px;border-radius:50%;background:#fff;animation:ptz-blink 1.2s ease-in-out infinite}
+.ptz-live-badge .ltxt{font:700 9px/14px 'Roboto',sans-serif;color:#fff;letter-spacing:.6px}
+@keyframes ptz-blink{0%,100%{opacity:1}50%{opacity:.25}}
+.ptz-video{flex-shrink:0;width:100%;aspect-ratio:16/9;background:#070611;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ptz-scroll{flex:1;overflow:hidden;padding:0 16px;display:flex;flex-direction:column}
+.ptz-main-row{flex:1;display:flex;align-items:center;justify-content:center}
+.ptz-ctrl-bottom{flex-shrink:0;padding:18px 0 26px;border-top:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:16px}
+/* Circular D-pad disc */
+.ptz-disc{width:240px;height:240px;border-radius:50%;position:relative;flex-shrink:0;background:radial-gradient(circle at 50% 50%,rgba(200,191,255,.07) 0%,rgba(200,191,255,.02) 50%,transparent 70%),linear-gradient(135deg,rgba(32,28,56,.96),rgba(20,17,42,.98));border:1.5px solid rgba(200,191,255,.18);box-shadow:0 12px 48px rgba(0,0,0,.65),0 0 0 1px rgba(200,191,255,.06),0 0 40px rgba(200,191,255,.07),inset 0 1px 0 rgba(255,255,255,.08),inset 0 0 48px rgba(200,191,255,.03);display:flex;align-items:center;justify-content:center}
+.ptz-disc::before{content:'';position:absolute;left:10%;right:10%;top:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(200,191,255,.14) 20%,rgba(200,191,255,.14) 80%,transparent);pointer-events:none}
+.ptz-disc::after{content:'';position:absolute;top:10%;bottom:10%;left:50%;width:1px;background:linear-gradient(180deg,transparent,rgba(200,191,255,.14) 20%,rgba(200,191,255,.14) 80%,transparent);pointer-events:none}
+.ptz-da{position:absolute;inset:0;border-radius:50%;display:flex;cursor:pointer;transition:background .15s}
+.ptz-da .material-symbols-outlined{color:rgba(255,255,255,.82);font-size:32px;pointer-events:none;filter:drop-shadow(0 0 5px rgba(200,191,255,.28))}
+.ptz-da.du{clip-path:polygon(50% 50%,0% 0%,100% 0%);align-items:flex-start;justify-content:center;padding-top:22px;background:linear-gradient(to bottom,rgba(200,191,255,.07),transparent 55%)}
+.ptz-da.dd{clip-path:polygon(50% 50%,0% 100%,100% 100%);align-items:flex-end;justify-content:center;padding-bottom:22px;background:linear-gradient(to top,rgba(200,191,255,.07),transparent 55%)}
+.ptz-da.dl{clip-path:polygon(50% 50%,0% 0%,0% 100%);align-items:center;justify-content:flex-start;padding-left:22px;background:linear-gradient(to right,rgba(200,191,255,.07),transparent 55%)}
+.ptz-da.dr{clip-path:polygon(50% 50%,100% 0%,100% 100%);align-items:center;justify-content:flex-end;padding-right:22px;background:linear-gradient(to left,rgba(200,191,255,.07),transparent 55%)}
+.ptz-da.du:active{background:radial-gradient(ellipse 80% 60% at 50% 8%,rgba(200,191,255,.34),transparent 68%)}
+.ptz-da.dd:active{background:radial-gradient(ellipse 80% 60% at 50% 92%,rgba(200,191,255,.34),transparent 68%)}
+.ptz-da.dl:active{background:radial-gradient(ellipse 60% 80% at 8% 50%,rgba(200,191,255,.34),transparent 68%)}
+.ptz-da.dr:active{background:radial-gradient(ellipse 60% 80% at 92% 50%,rgba(200,191,255,.34),transparent 68%)}
+.ptz-disc-ctr{position:absolute;width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,rgba(44,38,74,.99),rgba(30,25,55,.99));border:1.5px solid rgba(200,191,255,.28);box-shadow:0 0 0 5px rgba(200,191,255,.07),0 0 0 10px rgba(200,191,255,.025),0 4px 16px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);pointer-events:none;display:flex;align-items:center;justify-content:center}
+.ptz-disc-ctr .material-symbols-outlined{font-size:20px;color:rgba(200,191,255,.5);filter:drop-shadow(0 0 5px rgba(200,191,255,.45))}
+/* Zoom row */
+.ptz-zoom-row{display:flex;align-items:center;gap:12px;width:100%}
+.ptz-zcircle{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(200,191,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.07);transition:background .12s,border-color .12s}
+.ptz-zcircle:active{background:rgba(200,191,255,.22);border-color:rgba(200,191,255,.5)}
+.ptz-zcircle .material-symbols-outlined{font-size:20px;color:rgba(255,255,255,.85)}
+.ptz-ztrack{flex:1;height:5px;background:rgba(255,255,255,.09);border-radius:3px;position:relative}
+.ptz-zfill{width:55%;height:100%;background:linear-gradient(90deg,rgba(200,191,255,.28),var(--pri));border-radius:3px}
+.ptz-zthumb{position:absolute;left:55%;top:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--pri);border:2.5px solid #fff;box-shadow:0 0 10px rgba(200,191,255,.65)}
+/* Speed segments */
+.ptz-speed-row{display:flex;align-items:center;gap:12px;width:100%}
+.ptz-row-lbl{font:500 10px/14px 'Roboto',sans-serif;color:var(--on-sfv);letter-spacing:.6px;min-width:46px;text-transform:uppercase}
+.ptz-segs{display:flex;gap:4px;flex:1}
+.ptz-seg{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,.09);cursor:pointer;transition:background .15s}
+.ptz-seg.a1{background:rgba(175,165,255,.36)}
+.ptz-seg.a2{background:rgba(188,178,255,.52)}
+.ptz-seg.a3{background:rgba(200,191,255,.68)}
+.ptz-seg.a4{background:var(--pri)}
+/* Status */
+.ptz-status{font:400 11px/16px 'Roboto',sans-serif;color:var(--on-sfv);text-align:center;width:100%;opacity:.5;letter-spacing:.2px}
 
 /* -- Snapshot Gallery -- */
 .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 20px}
@@ -864,32 +888,52 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
     <!-- D1: PTZ Control -->
     <div class="pw">
       <div class="pf">
-        <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
         <div class="ptz-page">
+          <!-- Top nav bar -->
+          <div class="ptz-top">
+            <div class="ptz-back"><span class="material-symbols-outlined">arrow_back</span></div>
+            <div class="ptz-head">
+              <div class="ptz-cam-name">Front Door</div>
+              <div class="ptz-live-badge"><div class="ldot"></div><span class="ltxt">LIVE</span></div>
+            </div>
+            <div class="ptz-back"><span class="material-symbols-outlined">more_vert</span></div>
+          </div>
+          <!-- Video feed -->
           <div class="ptz-video">
-            <div class="sv" style="background:linear-gradient(135deg,#0f0e18,#1c1728)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:72px">door_front</span></div></div><div class="sg"></div>
-            <div class="hist-top"><div class="hb"><span class="material-symbols-outlined">arrow_back</span></div><div class="title">PTZ Control</div><div class="hb"><span class="material-symbols-outlined">more_vert</span></div></div>
-            <div class="ptz-overlay" style="justify-content:flex-end">
-              <div class="ptz-bottom">
-                <div class="ptz-pad">
-                  <div class="arr up"><span class="material-symbols-outlined">keyboard_arrow_up</span></div>
-                  <div class="arr dn"><span class="material-symbols-outlined">keyboard_arrow_down</span></div>
-                  <div class="arr lt"><span class="material-symbols-outlined">keyboard_arrow_left</span></div>
-                  <div class="arr rt"><span class="material-symbols-outlined">keyboard_arrow_right</span></div>
-                  <div class="center-dot"></div>
-                </div>
-                <div class="ptz-zoom">
-                  <div class="zb"><span class="material-symbols-outlined">remove</span></div>
-                  <div class="zbar"><div class="zfill"></div><div class="zthumb"></div></div>
-                  <div class="zb"><span class="material-symbols-outlined">add</span></div>
-                </div>
-                <div class="ptz-presets">
-                  <div class="preset active">Home</div>
-                  <div class="preset">Door</div>
-                  <div class="preset">Road</div>
-                  <div class="preset">Garden</div>
+            <div class="sv" style="position:absolute;inset:0;background:linear-gradient(135deg,#0f0e18,#1c1728)"><div class="sl"></div><div class="go"></div></div>
+          </div>
+          <!-- Controls area -->
+          <div class="ptz-scroll">
+            <div class="ptz-main-row">
+              <!-- Circular D-pad disc -->
+              <div class="ptz-disc">
+                <div class="ptz-da du"><span class="material-symbols-outlined">keyboard_arrow_up</span></div>
+                <div class="ptz-da dd"><span class="material-symbols-outlined">keyboard_arrow_down</span></div>
+                <div class="ptz-da dl"><span class="material-symbols-outlined">keyboard_arrow_left</span></div>
+                <div class="ptz-da dr"><span class="material-symbols-outlined">keyboard_arrow_right</span></div>
+                <div class="ptz-disc-ctr"><span class="material-symbols-outlined">adjust</span></div>
+              </div>
+            </div>
+            <!-- Bottom controls -->
+            <div class="ptz-ctrl-bottom">
+              <div class="ptz-zoom-row">
+                <div class="ptz-row-lbl">Zoom</div>
+                <div class="ptz-zcircle"><span class="material-symbols-outlined">zoom_out</span></div>
+                <div class="ptz-ztrack"><div class="ptz-zfill"></div><div class="ptz-zthumb"></div></div>
+                <div class="ptz-zcircle"><span class="material-symbols-outlined">zoom_in</span></div>
+              </div>
+              <div class="ptz-speed-row">
+                <div class="ptz-row-lbl">Speed</div>
+                <div class="ptz-segs">
+                  <div class="ptz-seg a1"></div>
+                  <div class="ptz-seg a2"></div>
+                  <div class="ptz-seg a3"></div>
+                  <div class="ptz-seg a4"></div>
+                  <div class="ptz-seg"></div>
                 </div>
               </div>
+              <div class="ptz-status">PTZ Ready · Front Door</div>
             </div>
           </div>
         </div>
@@ -1853,7 +1897,7 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
   });
 
   jump('Live View', '.hist-top .hb', 'Dashboard');
-  jump('PTZ Control', '.hist-top .hb:first-child', 'Live View');
+  jump('PTZ Control', '.ptz-back', 'Live View');
   jump('Snapshot Gallery', '.tab .ld', 'Live View');
   bind('Snapshot Gallery', '.gallery-item', (e)=>{
     e.preventDefault();

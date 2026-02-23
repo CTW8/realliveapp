@@ -299,31 +299,68 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 .ev-item .ev-text span{font:400 11px/16px 'Roboto',sans-serif;color:var(--on-sfv)}
 
 /* -- PTZ -- */
-.ptz-page{display:flex;flex-direction:column;height:100%;background:linear-gradient(135deg,#0f0e18,#1c1728)}
-.ptz-video{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d0d15,#1c1728)}
-.ptz-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;z-index:5}
-.ptz-top{padding:10px;display:flex;justify-content:space-between;align-items:center}
-.ptz-top .back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.ptz-top .back .material-symbols-outlined{color:#fff;font-size:20px}
-.ptz-top .title{font:500 14px/20px 'Roboto',sans-serif;color:#fff}
-.ptz-bottom{padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px}
-.ptz-pad{width:160px;height:160px;border-radius:50%;border:2px solid rgba(255,255,255,.15);position:relative;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);backdrop-filter:blur(8px)}
-.ptz-pad .center-dot{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3)}
-.ptz-pad .arr{position:absolute;color:rgba(255,255,255,.6);cursor:pointer}
-.ptz-pad .arr.up{top:12px}
-.ptz-pad .arr.dn{bottom:12px}
-.ptz-pad .arr.lt{left:12px}
-.ptz-pad .arr.rt{right:12px}
-.ptz-pad .arr .material-symbols-outlined{font-size:28px}
-.ptz-zoom{display:flex;align-items:center;gap:16px}
-.ptz-zoom .zb{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.ptz-zoom .zb .material-symbols-outlined{color:#fff;font-size:20px}
-.ptz-zoom .zbar{width:120px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;position:relative}
-.ptz-zoom .zbar .zfill{width:60%;height:100%;background:var(--pri);border-radius:2px}
-.ptz-zoom .zbar .zthumb{position:absolute;left:60%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--pri);box-shadow:0 0 4px rgba(0,0,0,.5)}
-.ptz-presets{display:flex;gap:8px}
-.ptz-presets .preset{padding:6px 14px;border-radius:var(--r6);background:rgba(255,255,255,.1);font:500 11px/16px 'Roboto',sans-serif;color:rgba(255,255,255,.7);cursor:pointer}
-.ptz-presets .preset.active{background:var(--pri);color:var(--on-pri)}
+.ptz-page{display:flex;flex-direction:column;height:100%;background:var(--sc);overflow:hidden}
+/* Top nav bar */
+.ptz-top{flex-shrink:0;height:52px;padding:0 12px;display:flex;justify-content:space-between;align-items:center;background:var(--sc1);border-bottom:1px solid rgba(255,255,255,.06)}
+.ptz-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ptz-back .material-symbols-outlined{color:#fff;font-size:20px}
+.ptz-head{display:flex;flex-direction:column;align-items:center;gap:3px}
+.ptz-cam-name{font:500 13px/18px 'Roboto',sans-serif;color:#fff}
+.ptz-live-badge{display:flex;align-items:center;gap:4px;background:rgba(220,50,50,.88);border-radius:3px;padding:2px 7px}
+.ptz-live-badge .ldot{width:5px;height:5px;border-radius:50%;background:#fff;animation:ptz-blink 1.2s ease-in-out infinite}
+.ptz-live-badge .ltxt{font:700 9px/14px 'Roboto',sans-serif;color:#fff;letter-spacing:.6px}
+@keyframes ptz-blink{0%,100%{opacity:1}50%{opacity:.25}}
+/* Video strip */
+.ptz-video{flex-shrink:0;width:100%;aspect-ratio:16/9;background:#070611;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+/* Controls scroll area */
+.ptz-scroll{flex:1;overflow-y:auto;padding:14px 16px 16px;display:flex;flex-direction:column;align-items:center;scrollbar-width:none}
+.ptz-scroll::-webkit-scrollbar{display:none}
+/* Joystick */
+.ptz-jpad{width:172px;height:172px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ptz-jring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.12);background:radial-gradient(ellipse at center,rgba(200,191,255,.07) 0%,rgba(8,6,20,.6) 70%)}
+.ptz-sector{position:absolute;cursor:pointer;transition:background .12s}
+.ptz-sector.su{top:0;left:0;right:0;height:50%;border-radius:9999px 9999px 0 0}
+.ptz-sector.sd{bottom:0;left:0;right:0;height:50%;border-radius:0 0 9999px 9999px}
+.ptz-sector.sl{top:0;bottom:0;left:0;width:50%;border-radius:9999px 0 0 9999px}
+.ptz-sector.sr{top:0;bottom:0;right:0;width:50%;border-radius:0 9999px 9999px 0}
+.ptz-sector:active{background:rgba(200,191,255,.14)}
+.ptz-arr{position:absolute;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.ptz-arr.au{top:6px;left:50%;transform:translateX(-50%)}
+.ptz-arr.ad{bottom:6px;left:50%;transform:translateX(-50%)}
+.ptz-arr.al{left:6px;top:50%;transform:translateY(-50%)}
+.ptz-arr.ar{right:6px;top:50%;transform:translateY(-50%)}
+.ptz-arr .material-symbols-outlined{font-size:28px;color:rgba(255,255,255,.75)}
+.ptz-jstop{width:52px;height:52px;border-radius:50%;background:var(--sc2);border:2px solid rgba(255,255,255,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:2;gap:1px;transition:border-color .15s,background .15s}
+.ptz-jstop:active{background:rgba(200,191,255,.18);border-color:var(--pri)}
+.ptz-jstop .material-symbols-outlined{font-size:18px;color:rgba(255,255,255,.6)}
+.ptz-jstop .slbl{font:700 8px/10px 'Roboto',sans-serif;color:rgba(255,255,255,.35);letter-spacing:.5px}
+/* Speed */
+.ptz-speed-row{display:flex;align-items:center;gap:10px;margin-top:14px;width:100%}
+.ptz-row-lbl{font:500 10px/14px 'Roboto',sans-serif;color:var(--on-sfv);letter-spacing:.5px;min-width:44px;text-transform:uppercase}
+.ptz-sdots{display:flex;gap:6px}
+.ptz-sdot{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.13);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.ptz-sdot.on{background:rgba(200,191,255,.18);border-color:var(--pri)}
+.ptz-sdot span{font:700 10px/14px 'Roboto',sans-serif;color:rgba(255,255,255,.3)}
+.ptz-sdot.on span{color:var(--pri)}
+/* Zoom */
+.ptz-zoom-row{display:flex;align-items:center;gap:10px;margin-top:12px;width:100%}
+.ptz-zb{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s}
+.ptz-zb:active{background:rgba(200,191,255,.2)}
+.ptz-zb .material-symbols-outlined{color:rgba(255,255,255,.8);font-size:18px}
+.ptz-ztrack{flex:1;height:4px;background:rgba(255,255,255,.1);border-radius:2px;position:relative}
+.ptz-zfill{width:55%;height:100%;background:linear-gradient(90deg,rgba(200,191,255,.2),var(--pri));border-radius:2px}
+.ptz-zthumb{position:absolute;left:55%;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--pri);border:2px solid rgba(255,255,255,.85);box-shadow:0 0 8px rgba(200,191,255,.4)}
+/* Presets */
+.ptz-presets-row{display:flex;gap:7px;margin-top:14px;width:100%;overflow-x:auto;padding-bottom:2px}
+.ptz-presets-row::-webkit-scrollbar{display:none}
+.ptz-preset{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r6);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);cursor:pointer;white-space:nowrap;transition:all .18s;flex-shrink:0}
+.ptz-preset.active{background:rgba(200,191,255,.14);border-color:rgba(200,191,255,.4)}
+.ptz-preset .material-symbols-outlined{font-size:14px;color:rgba(255,255,255,.35)}
+.ptz-preset.active .material-symbols-outlined{color:var(--pri)}
+.ptz-preset .plbl{font:500 11px/16px 'Roboto',sans-serif;color:rgba(255,255,255,.5)}
+.ptz-preset.active .plbl{color:var(--pri)}
+/* Status */
+.ptz-status{margin-top:10px;font:400 11px/16px 'Roboto',sans-serif;color:var(--on-sfv);text-align:center;width:100%;opacity:.6}
 
 /* -- Snapshot Gallery -- */
 .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 20px}
@@ -888,37 +925,78 @@ body::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
     <!-- D1: PTZ Control -->
     <div class="pw">
       <div class="pf">
-        <div class="sb" style="position:absolute;z-index:60;width:100%;color:#fff"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
+        <div class="sb"><span>9:41</span><div class="sb-r"><span class="material-symbols-outlined" style="font-size:15px">signal_cellular_alt</span><span class="material-symbols-outlined" style="font-size:15px">wifi</span><span class="material-symbols-outlined" style="font-size:15px">battery_5_bar</span></div></div>
         <div class="ptz-page">
+          <!-- Top nav bar -->
+          <div class="ptz-top">
+            <div class="ptz-back"><span class="material-symbols-outlined">arrow_back</span></div>
+            <div class="ptz-head">
+              <div class="ptz-cam-name">Front Door</div>
+              <div class="ptz-live-badge"><div class="ldot"></div><span class="ltxt">LIVE</span></div>
+            </div>
+            <div class="ptz-back"><span class="material-symbols-outlined">more_vert</span></div>
+          </div>
+          <!-- Video feed -->
           <div class="ptz-video">
-            <div class="sv" style="background:linear-gradient(135deg,#0f0e18,#1c1728)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:72px">door_front</span></div></div><div class="sg"></div>
-            <div class="ptz-overlay">
-              <div class="ptz-top">
-                <div class="back"><span class="material-symbols-outlined">arrow_back</span></div>
-                <div class="title">PTZ Control</div>
-                <div class="back"><span class="material-symbols-outlined">more_vert</span></div>
-              </div>
-              <div class="ptz-bottom">
-                <div class="ptz-pad">
-                  <div class="arr up"><span class="material-symbols-outlined">keyboard_arrow_up</span></div>
-                  <div class="arr dn"><span class="material-symbols-outlined">keyboard_arrow_down</span></div>
-                  <div class="arr lt"><span class="material-symbols-outlined">keyboard_arrow_left</span></div>
-                  <div class="arr rt"><span class="material-symbols-outlined">keyboard_arrow_right</span></div>
-                  <div class="center-dot"></div>
-                </div>
-                <div class="ptz-zoom">
-                  <div class="zb"><span class="material-symbols-outlined">remove</span></div>
-                  <div class="zbar"><div class="zfill"></div><div class="zthumb"></div></div>
-                  <div class="zb"><span class="material-symbols-outlined">add</span></div>
-                </div>
-                <div class="ptz-presets">
-                  <div class="preset active">Home</div>
-                  <div class="preset">Door</div>
-                  <div class="preset">Road</div>
-                  <div class="preset">Garden</div>
-                </div>
+            <div class="sv" style="position:absolute;inset:0;background:linear-gradient(135deg,#0f0e18,#1c1728)"><div class="sl"></div><div class="go"></div><div class="ri"><span class="material-symbols-outlined" style="font-size:64px;color:rgba(255,255,255,.2)">door_front</span></div></div>
+          </div>
+          <!-- Controls area -->
+          <div class="ptz-scroll">
+            <!-- Joystick -->
+            <div class="ptz-jpad">
+              <div class="ptz-jring"></div>
+              <div class="ptz-sector su"></div>
+              <div class="ptz-sector sd"></div>
+              <div class="ptz-sector sl"></div>
+              <div class="ptz-sector sr"></div>
+              <div class="ptz-arr au"><span class="material-symbols-outlined">keyboard_arrow_up</span></div>
+              <div class="ptz-arr ad"><span class="material-symbols-outlined">keyboard_arrow_down</span></div>
+              <div class="ptz-arr al"><span class="material-symbols-outlined">keyboard_arrow_left</span></div>
+              <div class="ptz-arr ar"><span class="material-symbols-outlined">keyboard_arrow_right</span></div>
+              <div class="ptz-jstop">
+                <span class="material-symbols-outlined">stop_circle</span>
+                <div class="slbl">STOP</div>
               </div>
             </div>
+            <!-- Speed selector -->
+            <div class="ptz-speed-row">
+              <div class="ptz-row-lbl">Speed</div>
+              <div class="ptz-sdots">
+                <div class="ptz-sdot"><span>1</span></div>
+                <div class="ptz-sdot"><span>2</span></div>
+                <div class="ptz-sdot"><span>3</span></div>
+                <div class="ptz-sdot on"><span>4</span></div>
+                <div class="ptz-sdot"><span>5</span></div>
+              </div>
+            </div>
+            <!-- Zoom control -->
+            <div class="ptz-zoom-row">
+              <div class="ptz-row-lbl">Zoom</div>
+              <div class="ptz-zb"><span class="material-symbols-outlined">zoom_out</span></div>
+              <div class="ptz-ztrack"><div class="ptz-zfill"></div><div class="ptz-zthumb"></div></div>
+              <div class="ptz-zb"><span class="material-symbols-outlined">zoom_in</span></div>
+            </div>
+            <!-- Preset positions -->
+            <div class="ptz-presets-row">
+              <div class="ptz-preset active">
+                <span class="material-symbols-outlined">home</span>
+                <span class="plbl">Home</span>
+              </div>
+              <div class="ptz-preset">
+                <span class="material-symbols-outlined">door_front</span>
+                <span class="plbl">Door</span>
+              </div>
+              <div class="ptz-preset">
+                <span class="material-symbols-outlined">add_road</span>
+                <span class="plbl">Road</span>
+              </div>
+              <div class="ptz-preset">
+                <span class="material-symbols-outlined">yard</span>
+                <span class="plbl">Garden</span>
+              </div>
+            </div>
+            <!-- Status -->
+            <div class="ptz-status">PTZ Ready · Front Door</div>
           </div>
         </div>
       </div>
